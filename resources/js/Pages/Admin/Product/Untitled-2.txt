@@ -1,0 +1,106 @@
+import React from "react";
+import AdminLayout from "../../../Layouts/AdminLayouts/AdminLayout";
+import { Link } from "@inertiajs/react";
+import { Search, SlidersHorizontal } from "lucide-react";
+
+function Products() {
+    return (
+        <div className="m-0 p-0 flex-col flex-1 w-full">
+            {/* Add w-full */}
+            <h1 className="text-2xl pl-2 font-bold dark:text-gray-300">
+                <span>Products List</span>
+            </h1>
+            {/* Header Card */}
+            
+              <div className="bg-white dark:bg-slate-800 overflow-hidden mt-3 rounded-2xl shadow-sm w-full">
+                <div className="flex justify-between p-4 dark:text-gray-100">
+                    <div>
+                        <h2 className="text-lg font-semibold">Product List</h2>
+                        <p className="dark:text-gray-400 text-gray-700 text-sm">
+                            Track your store's progress to boost your sales.
+                        </p>
+                    </div>
+                    <Link className="px-3 py-2 text-white text-sm font-medium shadow rounded-lg bg-blue-500 hover:bg-blue-600 transition">
+                        <span className="text-xl mr-1">+</span> Add Product
+                    </Link>
+                </div>
+
+                {/* Search & Filter */}
+                <div className="flex flex-wrap gap-3 justify-between border-t border-gray-300 dark:border-gray-700 p-4 dark:text-gray-100">
+                    <div className="border px-3 py-2 rounded-lg flex items-center gap-2 w-full sm:w-auto bg-white dark:bg-slate-900">
+                        <Search className="text-gray-600 dark:text-gray-300" />
+                        <input
+                            className="py-1 bg-transparent outline-none text-sm dark:text-gray-200"
+                            type="text"
+                            placeholder="Search..."
+                        />
+                    </div>
+
+                    <button className="px-4 py-2 border border-gray-400 flex items-center gap-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-900 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition">
+                        <SlidersHorizontal />
+                        <span className="text-sm font-medium">Filter</span>
+                    </button>
+                </div>
+            </div>
+            {/* Table */}
+            <div className="overflow-x-auto bg-white dark:bg-slate-800 mt-4 rounded-xl shadow-sm">
+                <table className="min-w-full text-sm">
+                    <thead className="bg-gray-200 dark:bg-slate-700 text-left">
+                        <tr>
+                            <th className="px-4 py-3 font-semibold">
+                                Products
+                            </th>
+                            <th className="px-4 py-3 font-semibold">
+                                Category
+                            </th>
+                            <th className="px-4 py-3 font-semibold">Brands</th>
+                            <th className="px-4 py-3 font-semibold">Price</th>
+                            <th className="px-4 py-3 font-semibold">Stock</th>
+                            <th className="px-4 py-3 font-semibold">
+                                Created At
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr className="border-t dark:border-gray-700">
+                            <td className="px-4 py-3 flex items-center gap-3">
+                                <img
+                                    src="#"
+                                    alt=""
+                                    className="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded"
+                                />
+                                <p>Apple Watch Ultra</p>
+                            </td>
+                            <td className="px-4 py-3">Watch</td>
+                            <td className="px-4 py-3">Apple</td>
+                            <td className="px-4 py-3">500500৳</td>
+                            <td className="px-4 py-3">5</td>
+                            <td className="px-4 py-3">13 Mar, 2025</td>
+                        </tr>
+
+                        <tr className="border-t dark:border-gray-700">
+                            <td className="px-4 py-3 flex items-center gap-3">
+                                <img
+                                    src="#"
+                                    alt=""
+                                    className="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded"
+                                />
+                                <p>Apple Watch Ultra</p>
+                            </td>
+                            <td className="px-4 py-3">Watch</td>
+                            <td className="px-4 py-3">Apple</td>
+                            <td className="px-4 py-3">500500৳</td>
+                            <td className="px-4 py-3">5</td>
+                            <td className="px-4 py-3">13 Mar, 2025</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}
+
+Products.layout = (page) => (
+    <AdminLayout children={page} title="All Products" />
+);
+export default Products;

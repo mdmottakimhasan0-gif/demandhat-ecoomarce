@@ -1,0 +1,2 @@
+import{j as e}from"./app-CMhgizmh.js";function a(){return e.jsx(e.Fragment,{children:e.jsxs("div",{className:"flex-col bg-white shadow-sm p-5",children:[e.jsx("h1",{className:"text-2xl py-2",children:"Categories"}),e.jsx("div",{className:"relative px-4",children:e.jsx(Link,{href:"/admin/addCategory",className:"absolute right-2 px-3 py-2 rouded-lg bg-blue-500 text-white",children:"Add Category"})}),e.jsx("div",{className:"border-sm rounded-lg"})]})})}export{a as default};
+//# sourceMappingURL=Category-D5qGxlCf.js.map

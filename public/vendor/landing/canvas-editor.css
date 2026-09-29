@@ -1,0 +1,168 @@
+/* Editor-only chrome for the builder canvas. Never loaded on public pages. */
+body.lp-editing { min-height: 100vh; }
+.lp-editing [data-lp-id]:hover { outline: 1px dashed rgba(59, 130, 246, .7); outline-offset: -1px; }
+.lp-editing [data-lp-selected] { outline: 2px solid #2563eb !important; outline-offset: -2px; }
+.lp-editing .lp-anim { opacity: 1 !important; transform: none !important; }
+.lp-editing a { cursor: default; }
+.lp-editing .lp-hp { display: none; }
+
+.lp-empty {
+    min-height: 72px; display: flex; align-items: center; justify-content: center; padding: 14px;
+    border: 1.5px dashed #cbd5e1; border-radius: 8px; color: #94a3b8; background: rgba(148, 163, 184, .06);
+    font: 500 13px/1.3 system-ui, sans-serif; text-align: center; width: 100%;
+}
+.lp-empty-page {
+    margin: 80px auto; max-width: 480px; padding: 48px 24px; text-align: center; border: 2px dashed #cbd5e1;
+    border-radius: 14px; color: #64748b; font: 500 15px/1.5 system-ui, sans-serif;
+}
+.lp-placeholder {
+    display: flex; align-items: center; justify-content: center; min-height: 120px; padding: 16px; width: 100%;
+    background: #f1f5f9; color: #94a3b8; border: 1.5px dashed #cbd5e1; border-radius: 8px; font: 500 13px system-ui, sans-serif;
+}
+.lp-unsupported {
+    padding: 14px; background: #fef2f2; color: #b91c1c; border: 1.5px dashed #fca5a5; border-radius: 8px;
+    font: 600 13px system-ui, sans-serif;
+}
+
+.lp-drop-inside { outline: 2px solid #2563eb !important; outline-offset: -2px; background-image: linear-gradient(rgba(37, 99, 235, .07), rgba(37, 99, 235, .07)); }
+#lp-drop-line { position: absolute; z-index: 999998; background: #2563eb; border-radius: 2px; pointer-events: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, .8); }
+#lp-drop-line[hidden] { display: none; }
+body.lp-dragging * { cursor: grabbing !important; }
+
+#lp-toolbar {
+    position: absolute; z-index: 999999; display: flex; align-items: stretch; height: 24px;
+    background: #2563eb; color: #fff; border-radius: 5px 5px 0 0; font: 600 11px/24px system-ui, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .25); user-select: none; white-space: nowrap;
+}
+#lp-toolbar[hidden] { display: none; }
+#lp-toolbar .lp-tb-handle { cursor: grab; padding: 0 7px; background: rgba(0, 0, 0, .18); border-radius: 5px 0 0 0; }
+#lp-toolbar .lp-tb-label { padding: 0 8px; }
+#lp-toolbar button {
+    all: unset; cursor: pointer; padding: 0 7px; font: 700 12px/24px system-ui, sans-serif; color: #fff;
+}
+#lp-toolbar button:hover { background: rgba(255, 255, 255, .2); }
+#lp-toolbar button[data-act="delete"]:hover { background: #dc2626; }
+
+/* Spacing / resize handles: orange = padding, blue dots = margin, blue bars/corner = size. */
+#lp-spacing[hidden] { display: none; }
+.lp-hd { position: absolute; z-index: 999997; }
+.lp-hd.lp-pad { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; border: 1.5px solid #fff; box-shadow: 0 0 0 1px #f59e0b, 0 1px 3px rgba(0,0,0,.3); }
+.lp-hd.lp-mar { width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; border: 1.5px solid #fff; box-shadow: 0 0 0 1px #3b82f6, 0 1px 3px rgba(0,0,0,.3); }
+.lp-hd.lp-pad[data-side="top"], .lp-hd.lp-pad[data-side="bottom"],
+.lp-hd.lp-mar[data-side="top"], .lp-hd.lp-mar[data-side="bottom"] { cursor: ns-resize; }
+.lp-hd.lp-pad[data-side="left"], .lp-hd.lp-pad[data-side="right"],
+.lp-hd.lp-mar[data-side="left"], .lp-hd.lp-mar[data-side="right"] { cursor: ew-resize; }
+.lp-hd.lp-rs { background: #2563eb; border: 1.5px solid #fff; box-shadow: 0 0 0 1px #2563eb, 0 1px 3px rgba(0,0,0,.3); }
+.lp-hd.lp-rs-e { width: 6px; height: 24px; border-radius: 3px; cursor: ew-resize; }
+.lp-hd.lp-rs-s { width: 24px; height: 6px; border-radius: 3px; cursor: ns-resize; }
+.lp-hd.lp-rs-se { width: 12px; height: 12px; border-radius: 2px 0 2px 2px; cursor: nwse-resize; }
+.lp-hd:hover, .lp-hd:active { transform: scale(1.35); }
+#lp-hd-badge {
+    position: absolute; z-index: 999999; background: #111827; color: #fff; padding: 4px 7px; border-radius: 5px;
+    font: 600 11px/1 system-ui, sans-serif; pointer-events: none; white-space: nowrap;
+}
+#lp-hd-badge[hidden] { display: none; }
+#lp-hd-badge.is-snap { background: #db2777; }
+body.lp-hd-dragging { cursor: inherit; }
+
+/* Magenta guide line shown when a dragged padding/margin handle snaps to match the parent. */
+#lp-snap-guide { position: absolute; z-index: 999998; background: #db2777; pointer-events: none; box-shadow: 0 0 0 1px rgba(255,255,255,.6); }
+#lp-snap-guide[hidden] { display: none; }
+
+/* Ruler (toggled from the top bar). Ticks/labels are positioned in JS from scroll offset. */
+#lp-ruler-h, #lp-ruler-v, #lp-ruler-corner { position: fixed; background: #f8fafc; z-index: 999995; }
+#lp-ruler-h[hidden], #lp-ruler-v[hidden], #lp-ruler-corner[hidden] { display: none; }
+#lp-ruler-h { top: 0; left: 0; right: 0; height: 22px; border-bottom: 1px solid #cbd5e1; overflow: hidden; }
+#lp-ruler-v { top: 0; left: 0; bottom: 0; width: 22px; border-right: 1px solid #cbd5e1; overflow: hidden; }
+#lp-ruler-corner { top: 0; left: 0; width: 22px; height: 22px; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; z-index: 999996; }
+.lp-ruler-tick { position: absolute; background: #cbd5e1; }
+#lp-ruler-h .lp-ruler-tick { top: 16px; width: 1px; height: 6px; }
+#lp-ruler-h .lp-ruler-tick-major { top: 8px; height: 14px; background: #94a3b8; }
+#lp-ruler-v .lp-ruler-tick { left: 16px; height: 1px; width: 6px; }
+#lp-ruler-v .lp-ruler-tick-major { left: 8px; width: 14px; background: #94a3b8; }
+.lp-ruler-label { position: absolute; font: 500 9px/1 system-ui, sans-serif; color: #64748b; white-space: nowrap; pointer-events: none; }
+#lp-ruler-h .lp-ruler-label { top: 2px; }
+#lp-ruler-v .lp-ruler-label { left: 2px; writing-mode: vertical-rl; text-orientation: mixed; }
+.lp-ruler-band { position: absolute; background: rgba(37, 99, 235, .35); pointer-events: none; }
+#lp-ruler-h .lp-ruler-band-h { top: 0; height: 22px; }
+#lp-ruler-v .lp-ruler-band-v { left: 0; width: 22px; }
+.lp-ruler-cursor { position: fixed; background: #2563eb; z-index: 999996; pointer-events: none; }
+.lp-ruler-cursor[hidden] { display: none; }
+.lp-ruler-cursor-h { top: 0; width: 1px; height: 22px; }
+.lp-ruler-cursor-v { left: 0; height: 1px; width: 22px; }
+#lp-ruler-coord {
+    position: fixed; z-index: 999999; background: #2563eb; color: #fff; padding: 2px 6px; border-radius: 4px;
+    font: 600 10px/1.4 system-ui, sans-serif; pointer-events: none; white-space: nowrap;
+}
+#lp-ruler-coord[hidden] { display: none; }
+
+/* Inline Editing Toolbar & Active Highlight */
+.lp-inline-active {
+    outline: 2px dashed #2563eb !important;
+    outline-offset: 3px !important;
+    background-color: rgba(37, 99, 235, 0.07) !important;
+    border-radius: 4px;
+    cursor: text !important;
+}
+
+#lp-inline-bar {
+    position: absolute;
+    z-index: 1000000;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 6px;
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    font: 500 11px/1 system-ui, sans-serif;
+    user-select: none;
+    pointer-events: auto;
+}
+#lp-inline-bar[hidden] { display: none; }
+#lp-inline-bar button {
+    all: unset;
+    cursor: pointer;
+    padding: 4px 7px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+#lp-inline-bar button:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+}
+#lp-inline-bar button.lp-btn-add {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+#lp-inline-bar button.lp-btn-add:hover {
+    background: #059669;
+    color: #fff;
+}
+#lp-inline-bar button.lp-btn-del {
+    color: #fca5a5;
+}
+#lp-inline-bar button.lp-btn-del:hover {
+    background: #dc2626;
+    color: #fff;
+}
+#lp-inline-bar button.lp-btn-done {
+    background: #2563eb;
+    color: #fff;
+}
+#lp-inline-bar button.lp-btn-done:hover {
+    background: #1d4ed8;
+}
+#lp-inline-bar .lp-inline-sep {
+    width: 1px;
+    height: 14px;
+    background: #334155;
+    margin: 0 3px;
+}
+

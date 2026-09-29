@@ -1,0 +1,33 @@
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+*- Copy.env
+.env.backup
+.env.production
+*.sql
+*.sqlite*
+demandhut
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+# /public/build  <-- intentionally NOT ignored: production has no npm, build locally and push
+/public/hot
+/public/storage
+/storage/*.key
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
