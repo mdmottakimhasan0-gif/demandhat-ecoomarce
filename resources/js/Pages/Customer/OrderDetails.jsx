@@ -4,7 +4,7 @@ import CustomerLayout from "@/Layouts/CustomerLayouts/CustomerLayout";
 
 function OrderDetails({ order }) {
     // --- Configuration ---
-    const brandColor = "#059669";
+    const brandColor = "#4f46e5";
 
     // Status Logic
     const steps = ["Pending", "Processing", "Shipped", "Delivered"];
@@ -209,7 +209,7 @@ function OrderDetails({ order }) {
                                             Sold by:{" "}
                                             <span className="text-gray-700 font-medium">
                                                 {item.product?.vendor_name ||
-                                                    "Demand Bazar"}
+                                                    "Unity Haven"}
                                             </span>
                                         </p>
                                     </div>
@@ -217,7 +217,7 @@ function OrderDetails({ order }) {
                                         <p className="text-sm text-gray-500 font-medium">
                                             Qty: {item.quantity}
                                         </p>
-                                        <p className="text-lg text-[#059669] font-bold">
+                                        <p className="text-lg text-indigo-600 font-bold">
                                             ৳ {item.price}
                                         </p>
                                     </div>

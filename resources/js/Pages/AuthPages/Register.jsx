@@ -34,13 +34,13 @@ function Register() {
         <div className="w-full flex items-center justify-center p-4 lg:p-8">
             <div className="max-w-[1200px] mx-auto border border-gray-200 bg-white rounded-2xl shadow-xl overflow-hidden grid lg:grid-cols-2">
                 {/* Left Side - Image Section */}
-                <div className="relative bg-[#064E3B] bg-gradient-to-br from-[#064E3B] to-[#047857] p-10 flex flex-col justify-center items-center text-center max-md:order-1">
+                <div className="relative bg-[#0a0a18] bg-gradient-to-br from-[#0a0a18] via-[#1e1b4b] to-[#2e1065] p-10 flex flex-col justify-center items-center text-center max-md:order-1">
                     <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none bg-[radial-gradient(#ffffff33_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
                     <h2 className="text-white text-3xl font-poppins font-bold mb-4 relative z-10">
-                        Join Us Today
+                        Join Unity Haven
                     </h2>
-                    <p className="text-[#D1FAE5] font-poppins text-sm mb-8 relative z-10 max-w-xs mx-auto">
+                    <p className="text-indigo-200 font-poppins text-sm mb-8 relative z-10 max-w-xs mx-auto">
                         Create your account to start your journey with us.
                     </p>
 
@@ -237,7 +237,7 @@ function Register() {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full py-3.5 px-4 text-sm font-bold tracking-wide rounded-lg text-white bg-[#059669] hover:bg-[#047857] shadow-md hover:shadow-lg focus:outline-none transition-all duration-300 transform active:scale-[0.98]"
+                                className="w-full py-3.5 px-4 text-sm font-bold tracking-wide rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg focus:outline-none transition-all duration-300 transform active:scale-[0.98]"
                             >
                                 {processing ? "Registering..." : "Sign Up"}
                             </button>

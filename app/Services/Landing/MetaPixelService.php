@@ -4,6 +4,7 @@ namespace App\Services\Landing;
 
 use App\Models\LandingPage;
 use App\Models\LandingPageSetting;
+use App\Models\SiteSetting;
 
 /** Resolves the effective Pixel + CAPI configuration for a page. */
 class MetaPixelService
@@ -19,15 +20,18 @@ class MetaPixelService
         $meta = $t['meta'];
         $capi = $t['capi'];
 
-        $globalPixel = LandingPageSetting::publicValue('meta.pixel_id') ?: config('landing.tracking.meta_default_pixel_id');
-        $globalEnabled = LandingPageSetting::publicValue('meta.enabled', '1') !== '0';
+        $globalPixel = LandingPageSetting::publicValue('meta.pixel_id')
+            ?: SiteSetting::read('site.meta_pixel_id')
+            ?: config('landing.tracking.meta_default_pixel_id');
+        $globalEnabled = LandingPageSetting::publicValue('meta.enabled', '1') !== '0'
+            && (bool) SiteSetting::read('site.meta_pixel_enabled', true);
 
         // Browser pixel
         $pixel = $meta['use_global'] ? $globalPixel : ($meta['pixel_id'] ?: null);
         $browserEnabled = (bool) $meta['enabled'] && ($meta['use_global'] ? $globalEnabled : true) && $pixel;
 
         // Conversions API
-        $globalCapi = LandingPageSetting::publicValue('meta.capi_enabled', '0') === '1';
+        $globalCapi = (LandingPageSetting::publicValue('meta.capi_enabled', '0') === '1') || !empty(SiteSetting::read('site.meta_capi_token'));
         $capiEnabled = $capi['use_global'] ? ($globalCapi && (bool) $capi['enabled']) : (bool) $capi['enabled'];
         $capiPixel = $capi['use_global'] ? $globalPixel : ($capi['pixel_id'] ?: $pixel);
 
@@ -39,7 +43,7 @@ class MetaPixelService
         $token = null;
         if ($withSecrets && $capiEnabled) {
             $token = $capi['use_global']
-                ? (LandingPageSetting::get('meta.access_token') ?: config('landing.tracking.meta_default_access_token'))
+                ? (LandingPageSetting::get('meta.access_token') ?: SiteSetting::read('site.meta_capi_token') ?: config('landing.tracking.meta_default_access_token'))
                 : ($page && $page->hasCapiToken() ? $page->capi_access_token : null);
         }
 

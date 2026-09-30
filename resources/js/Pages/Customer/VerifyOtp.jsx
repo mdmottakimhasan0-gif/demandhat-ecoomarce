@@ -20,7 +20,7 @@ function VerifyOtp({ email }) {
 
     return (
         <div className="min-h-[80vh] flex font-hindSiliguri items-center justify-center bg-gray-50 px-4 py-12">
-            <Head title="ইমেইল ভেরিফিকেশন - Demand Bazar" />
+            <Head title="ইমেইল ভেরিফিকেশন - Unity Haven" />
 
             <div className="w-full max-w-md">
                 {/* Back Button */}

@@ -93,6 +93,8 @@ Route::middleware('auth')->group(function () {
 
     // 5. Courier Actions
     Route::post('/admin/courier/steadfast/{id}', [CourierController::class, 'sendToSteadfast']);
+    Route::post('/admin/courier/pathao/{id}', [CourierController::class, 'sendToPathao']);
+    Route::post('/admin/courier/send/{id}', [CourierController::class, 'sendOrder'])->name('admin.courier.send');
     Route::get('/admin/orders/{id}/check-fraud', [OrderController::class, 'checkFraud'])->name('admin.orders.fraud_check');
     Route::get('/admin/orders/export/pdf', [OrderController::class, 'exportPdf'])->name('admin.orders.export');
     Route::get('/admin/orders/{id}/invoice', [OrderController::class, 'printInvoice'])->name('admin.orders.invoice');
@@ -121,6 +123,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/admin/settings/order-protection', [\App\Http\Controllers\OrderProtectionController::class, 'update'])->name('admin.order_protection.update');
     Route::post('/admin/settings/order-protection/blocked', [\App\Http\Controllers\OrderProtectionController::class, 'block'])->name('admin.order_protection.block');
     Route::delete('/admin/settings/order-protection/blocked/{id}', [\App\Http\Controllers\OrderProtectionController::class, 'unblock'])->name('admin.order_protection.unblock');
+
+    // Courier & Fraud Integration (Settings > Integrations)
+    Route::put('/admin/settings/courier-integration', [CourierController::class, 'updateSettings'])->name('admin.courier_integration.update');
+    Route::post('/admin/settings/courier-integration/test-steadfast', [CourierController::class, 'testSteadfast'])->name('admin.courier_integration.test_steadfast');
+    Route::post('/admin/settings/courier-integration/test-pathao', [CourierController::class, 'testPathao'])->name('admin.courier_integration.test_pathao');
+    Route::get('/admin/settings/courier-integration/pathao-stores', [CourierController::class, 'fetchPathaoStores'])->name('admin.courier_integration.pathao_stores');
+    Route::get('/admin/settings/courier-integration/pathao-cities', [CourierController::class, 'fetchPathaoCities'])->name('admin.courier_integration.pathao_cities');
+    Route::get('/admin/settings/courier-integration/pathao-zones/{cityId}', [CourierController::class, 'fetchPathaoZones'])->name('admin.courier_integration.pathao_zones');
+    Route::get('/admin/settings/courier-integration/pathao-areas/{zoneId}', [CourierController::class, 'fetchPathaoAreas'])->name('admin.courier_integration.pathao_areas');
 
 
     // 1. Dashboard

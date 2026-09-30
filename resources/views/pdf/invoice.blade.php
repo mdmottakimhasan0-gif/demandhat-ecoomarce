@@ -111,12 +111,12 @@
 <body>
     <div class="invoice-header">
         <div class="company-info">
-            <h1>DEMAND<span class="bil"> BAZAR</span></h1>
+            <h1>UNITY<span class="bil"> HAVEN</span></h1>
             <p>
                 4 Tola Mor, Rangpur<br>
                 Rangpur Sadar<br>
                 Phone: 01705822734<br>
-                Email: demandhatbd@gmail.com
+                Email: info@unityhavenbd.com
             </p>
         </div>
         <div class="invoice-info">

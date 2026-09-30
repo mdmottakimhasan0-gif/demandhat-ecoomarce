@@ -53,20 +53,20 @@ function Navbar({ onToggleSidebar }) {
     };
 
     return (
-        <nav className="sticky top-0 z-50 w-full bg-gradient-to-r from-[#064E3B] via-[#047857] to-[#059669] shadow-lg shadow-emerald-900/20 transition-colors duration-300">
+        <nav className="sticky top-0 z-50 w-full bg-gradient-to-r from-[#0a0a18] via-[#121633] to-[#1e1b4b] shadow-lg shadow-indigo-950/40 border-b border-indigo-900/40 transition-colors duration-300">
             {/* Top Bar: Logo, Desktop Nav, and Icons */}
             <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
                 {/* Left: Hamburger (Mobile) + Logo */}
                 <div className="flex items-center gap-2">
                     <button
                         onClick={onToggleSidebar}
-                        className="p-2 rounded-lg text-white hover:bg-black/10 transition"
+                        className="p-2 rounded-lg text-white hover:bg-white/10 transition"
                         aria-label="Menu"
                     >
                         <FiMenu size={24} />
                     </button>
 
-                    <Link href="/" className="flex items-center group" aria-label="Demand Bazar home">
+                    <Link href="/" className="flex items-center group" aria-label="Unity Haven home">
                         <Brand tone="light" size="text-xl sm:text-2xl" />
                     </Link>
                 </div>

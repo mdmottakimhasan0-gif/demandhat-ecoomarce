@@ -49,14 +49,16 @@
 
     // ---- Meta Pixel (async, never blocks rendering) ---------------------------
     function loadPixel(id) {
-        if (window.fbq) return;
-        var n = window.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
-        if (!window._fbq) window._fbq = n;
-        n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
-        var t = document.createElement('script');
-        t.async = true; t.src = 'https://connect.facebook.net/en_US/fbevents.js';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(t, s);
+        if (!id) return;
+        if (!window.fbq) {
+            var n = window.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+            if (!window._fbq) window._fbq = n;
+            n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+            var t = document.createElement('script');
+            t.async = true; t.src = 'https://connect.facebook.net/en_US/fbevents.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(t, s);
+        }
         window.fbq('init', id);
     }
 
@@ -64,12 +66,16 @@
 
     // Fires a browser event with an explicit eventID so Meta can de-duplicate it against the CAPI copy.
     function fire(name, eventId, params) {
-        if (LP.preview || !LP.pixel) return;
+        if (LP.preview || !LP.pixel || !LP.pixel.id) return;
         params = params || {};
         whenAllowed(function () {
             if (!window.fbq) return;
-            if (STANDARD.indexOf(name) > -1) window.fbq('track', name, params, { eventID: eventId });
-            else window.fbq('trackCustom', name, params, { eventID: eventId });
+            // Use trackSingle with LP.pixel.id to target this landing page's pixel specifically
+            if (STANDARD.indexOf(name) > -1) {
+                window.fbq('trackSingle', LP.pixel.id, name, params, { eventID: eventId });
+            } else {
+                window.fbq('trackSingleCustom', LP.pixel.id, name, params, { eventID: eventId });
+            }
         });
     }
 

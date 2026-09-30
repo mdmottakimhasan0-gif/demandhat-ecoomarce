@@ -5,18 +5,18 @@ import { FaShippingFast, FaLeaf, FaUsers } from "react-icons/fa";
 
 function About() {
     return (
-        <div className="bg-[#F5F7F4] transition-colors duration-300 font-hindSiliguri">
-            <Head title="About Demand Bazar" />
+        <div className="bg-[#F8FAFC] transition-colors duration-300 font-hindSiliguri">
+            <Head title="About Unity Haven" />
             {/* Hero Section */}
-            <section className="bg-gradient-to-r from-[#059669] to-[#047857] text-white">
+            <section className="bg-gradient-to-r from-[#0b0c1e] via-[#1e1b4b] to-[#2e1065] text-white">
                 <div className="mx-auto px-6 py-20 text-center">
-                    <h1 className="text-4xl md:text-6xl font-extrabold">
-                        ডিমান্ড হাট{" "}
-                        <span className="text-[#7DEF7F]">সম্পর্কে</span> জানুন
+                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
+                        ইউনিটি হ্যাভেন{" "}
+                        <span className="text-violet-400">সম্পর্কে</span> জানুন
                     </h1>
-                    <p className="mt-6 max-w-3xl mx-auto text-lg text-gray-100">
+                    <p className="mt-6 max-w-3xl mx-auto text-lg text-indigo-100">
                         সাশ্রয়ী মূল্যে মানসম্মত নিত্যপ্রয়োজনীয় পণ্য পৌঁছে দিতে
-                        আমরা কাজ করছি একটি ক্রেতা-বান্ধব ই-কমার্স প্ল্যাটফর্ম
+                        আমরা কাজ করছি একটি আধুনিক ও নির্ভরযোগ্য ই-কমার্স প্ল্যাটফর্ম
                         হিসেবে।
                     </p>
                 </div>
@@ -30,7 +30,7 @@ function About() {
                             আমরা কারা?
                         </h2>
                         <p className="text-gray-600 leading-relaxed mb-4">
-                            ডিমান্ড বাজার (Demand Bazar) একটি আধুনিক ই-কমার্স
+                            ইউনিটি হ্যাভেন (Unity Haven) একটি আধুনিক ই-কমার্স
                             প্লাটফর্ম যা মূলত শিক্ষার্থী, ব্যাচেলর এবং সচেতন
                             ক্রেতাদের কথা মাথায় রেখে তৈরি করা হয়েছে। যারা
                             অতিরিক্ত খরচ না করেই গুণমান বজায় রাখতে চান, আমরা
@@ -46,13 +46,13 @@ function About() {
                             ক্যাশ অন ডেলিভারি সুবিধা।
                         </p>
                     </div>
-                    <div className="bg-white rounded-2xl shadow-lg p-8">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
                         <h3 className="text-xl font-semibold text-gray-800 mb-4">
                             যোগাযোগের তথ্য
                         </h3>
                         <ul className="space-y-3 text-gray-600">
-                            <li>📞 মোবাইল: 09638866866</li>
-                            <li>📧 ইমেইল: demandhatbd@gmail.com</li>
+                            <li>📞 মোবাইল: +88 01898-385395</li>
+                            <li>📧 ইমেইল: info@unityhavenbd.com</li>
                             <li>📍 সেবা দিচ্ছি সারা বাংলাদেশে</li>
                         </ul>
                     </div>
@@ -60,14 +60,14 @@ function About() {
             </section>
 
             {/* Values Section */}
-            <section className="bg-[#D1FAE5] py-16">
+            <section className="bg-indigo-50/60 py-16">
                 <div className="mx-auto px-6">
                     <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
                         আমাদের মূল লক্ষ্য ও আদর্শ
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-[1200px] mx-auto">
-                        <div className="bg-white rounded-xl p-6 shadow-md text-center">
-                            <FaLeaf className="text-4xl mx-auto text-[#059669] mb-4" />
+                        <div className="bg-white rounded-xl p-6 shadow-md text-center border border-indigo-100/50">
+                            <FaLeaf className="text-4xl mx-auto text-indigo-600 mb-4" />
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">
                                 মানসম্মত পণ্য
                             </h3>
@@ -77,8 +77,8 @@ function About() {
                                 করে।
                             </p>
                         </div>
-                        <div className="bg-white rounded-xl p-6 shadow-md text-center">
-                            <FaShippingFast className="text-4xl mx-auto text-[#059669] mb-4" />
+                        <div className="bg-white rounded-xl p-6 shadow-md text-center border border-indigo-100/50">
+                            <FaShippingFast className="text-4xl mx-auto text-indigo-600 mb-4" />
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">
                                 দ্রুত ডেলিভারি
                             </h3>
@@ -88,8 +88,8 @@ function About() {
                                 নিশ্চিত করি।
                             </p>
                         </div>
-                        <div className="bg-white rounded-xl p-6 shadow-md text-center">
-                            <FaUsers className="text-4xl mx-auto text-[#059669] mb-4" />
+                        <div className="bg-white rounded-xl p-6 shadow-md text-center border border-indigo-100/50">
+                            <FaUsers className="text-4xl mx-auto text-indigo-600 mb-4" />
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">
                                 গ্রাহক সন্তুষ্টি
                             </h3>
@@ -109,13 +109,13 @@ function About() {
                     স্মার্ট কেনাকাটা, সুন্দর জীবন।
                 </h2>
                 <p className="text-gray-600 max-w-2xl mx-auto mb-6">
-                    সাশ্রয়ী এবং মানসম্মত অনলাইন কেনাকাটার জন্য ডিমান্ড হাট-এর
+                    সাশ্রয়ী এবং মানসম্মত অনলাইন কেনাকাটার জন্য ইউনিটি হ্যাভেন (Unity Haven)-এর
                     উপর আস্থা রাখা হাজার হাজার সুখী গ্রাহকদের সাথে আপনিও যোগ
                     দিন।
                 </p>
                 <a
                     href="/productspage"
-                    className="inline-block px-8 py-3 rounded-xl bg-[#059669] text-white font-semibold hover:bg-[#047857] transition"
+                    className="inline-block px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-indigo-600/30 transition-all"
                 >
                     পণ্যগুলো দেখুন
                 </a>

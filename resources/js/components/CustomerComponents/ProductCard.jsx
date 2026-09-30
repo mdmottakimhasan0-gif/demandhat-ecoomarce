@@ -87,19 +87,19 @@ const ProductCard = ({ product }) => {
 
                 {/* Content Section */}
                 <div className="p-3 flex flex-col flex-grow">
-                    <h3 className="font-poppins text-slate-800 font-medium text-sm sm:text-base mb-1.5 line-clamp-1 group-hover:text-[#059669] transition-colors tracking-tighter">
+                    <h3 className="font-poppins text-slate-800 font-medium text-sm sm:text-base mb-1.5 line-clamp-1 group-hover:text-indigo-600 transition-colors tracking-tighter">
                         {product.name}
                     </h3>
 
                     {/* <p className="text-slate-400 font-hindSiliguri text-xs mb-4 line-clamp-2 leading-relaxed">
                         {product.short_description ||
-                            "High quality product from Demand Bazar"}
+                            "High quality product from Unity Haven"}
                     </p> */}
 
                     <div className="mt-auto space-y-3.5">
                         {/* Compact Inline Pricing */}
                         <div className="flex items-baseline gap-2">
-                            <span className="font-bold text-[#059669] text-lg">
+                            <span className="font-bold text-indigo-600 text-lg">
                                 Tk {Math.round(discountedPrice)}
                             </span>
                             {discountPercentage > 0 && (

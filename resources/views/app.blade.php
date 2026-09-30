@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="facebook-domain-verification" content="rq7mn5jdlxuul12lwlev3y881n6rq4" />
-   <link rel="icon" type="image/png" sizes="25" href="{{ asset('facon.png') }}?v=2">
-    <title inertia>{{ config('app.name', 'Laravel') }}</title>
+   <link rel="icon" type="image/png" sizes="25" href="{{ asset('facon.png') }}?v=3">
+    <title inertia>{{ config('app.name', 'Unity Haven') }}</title>
     
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

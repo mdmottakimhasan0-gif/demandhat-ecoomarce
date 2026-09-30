@@ -278,26 +278,37 @@ export default function FraudCheckModal({
                     ) : (
                         <div className="text-center py-8">
                             <FiAlertTriangle
-                                className="mx-auto text-red-500 mb-2"
-                                size={30}
+                                className="mx-auto text-amber-500 mb-2"
+                                size={32}
                             />
-                            <p className="text-gray-800 dark:text-white font-medium">
-                                No Data Found
+                            <p className="text-gray-800 dark:text-white font-semibold text-base">
+                                {data?.message || data?.error || "No Data Found"}
                             </p>
-                            <p className="text-gray-500 text-sm mb-4">
-                                {data?.error ||
-                                    "The API response was empty or the number is incorrect."}
+                            <p className="text-gray-500 text-xs mt-1 mb-4 max-w-md mx-auto">
+                                {!data?.data && (
+                                    <span>
+                                        Make sure your BD Courier API Key or Steadfast credentials are configured in{" "}
+                                        <a
+                                            href="/admin/settings"
+                                            className="text-blue-600 underline font-medium"
+                                        >
+                                            Admin Settings &gt; Integrations
+                                        </a>.
+                                    </span>
+                                )}
                             </p>
 
                             {/* Debugger for Admin: Only if needed */}
-                            <details className="text-xs text-left bg-gray-100 p-2 rounded">
-                                <summary className="cursor-pointer text-blue-500">
-                                    Show Raw Debug Data
-                                </summary>
-                                <pre className="mt-2 whitespace-pre-wrap">
-                                    {JSON.stringify(data, null, 2)}
-                                </pre>
-                            </details>
+                            {data && (
+                                <details className="text-xs text-left bg-gray-50 dark:bg-slate-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 max-w-lg mx-auto">
+                                    <summary className="cursor-pointer text-blue-500 font-medium">
+                                        Show Response Details
+                                    </summary>
+                                    <pre className="mt-2 text-[11px] font-mono text-gray-700 dark:text-gray-300 whitespace-pre-wrap overflow-x-auto">
+                                        {JSON.stringify(data, null, 2)}
+                                    </pre>
+                                </details>
+                            )}
                         </div>
                     )}
                 </div>

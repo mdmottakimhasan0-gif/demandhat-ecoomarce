@@ -57,10 +57,10 @@ const OrderSuccess = ({ order, recommended = [] }) => {
 
     return (
         <div className="bg-[#F7FAF7] min-h-screen font-hindSiliguri">
-            <Head title="Order Confirmed — Demand Bazar" />
+            <Head title="Order Confirmed — Unity Haven" />
 
             {/* ── Hero confirmation band ────────────────────────────── */}
-            <div className="bg-gradient-to-br from-[#059669] to-[#4a6b41] text-white">
+            <div className="bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81] text-white">
                 <div className="max-w-2xl mx-auto px-4 pt-14 pb-16 text-center">
                     {/* Checkmark ring */}
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 border-2 border-white/40 mb-5">

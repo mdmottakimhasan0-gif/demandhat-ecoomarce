@@ -48,24 +48,19 @@ class HandleInertiaRequests extends Middleware
 
             // 🛒 ADD THIS FOR THE CART BADGE 🛒
             'cartCount' => function () use ($request) {
-                /* 
-                 * OPTION 1: IF YOUR CART IS STORED IN THE DATABASE
-                 * Uncomment the line below if you have a Cart model linked to the user.
-                 * (Make sure to import App\Models\Cart at the top)
-                 */
-                // return Auth::check() ? Cart::where('user_id', Auth::id())->sum('quantity') : 0;
-    
-
-                /* 
-                 * OPTION 2: IF YOUR CART IS STORED IN THE SESSION
-                 * Uncomment the lines below if you save cart items in the Laravel session.
-                 */
                 $cart = $request->session()->get('cart', []);
-                return is_array($cart) ? count($cart) : 0; // Use collect($cart)->sum('quantity') if you want total items instead of unique products
-    
+                if (!is_array($cart) || empty($cart)) {
+                    return 0;
+                }
 
-                // Default return if neither is set yet (Replace this once you choose Option 1 or 2)
-                return 0;
+                $productIds = array_keys($cart);
+                $existingIds = \App\Models\Product::whereIn('id', $productIds)->pluck('id')->toArray();
+                if (count($existingIds) !== count($cart)) {
+                    $cart = array_intersect_key($cart, array_flip($existingIds));
+                    $request->session()->put('cart', $cart);
+                }
+
+                return count($cart);
             },
 
             // Flash messages
@@ -86,6 +81,11 @@ class HandleInertiaRequests extends Middleware
             'global' => [
                 // Fetch the first marquee, or add logic to find the 'active' one
                 'marquee' => cache()->remember('global_marquee', 86400, fn() => Marquee::first()),
+            ],
+
+            'sitePixel' => [
+                'enabled' => (bool) \App\Models\SiteSetting::read('site.meta_pixel_enabled', true),
+                'id' => (string) (\App\Models\SiteSetting::read('site.meta_pixel_id') ?: env('VITE_FACEBOOK_PIXEL_ID', '')),
             ],
         ];
     }

@@ -26,6 +26,10 @@ class Order extends Model
         'assigned_to',
         'authorized_by',
         'courier_invoice_id',
+        'courier_name',
+        'courier_consignment_id',
+        'courier_tracking_code',
+        'courier_status',
     ];
 
     protected $casts = [

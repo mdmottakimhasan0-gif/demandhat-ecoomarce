@@ -17,32 +17,28 @@ use Inertia\Inertia;
 class OrderController extends Controller
 {
 
-    public function checkFraud($id)
+    public function checkFraud($id, \App\Services\Courier\CourierIntegrationService $courierService)
     {
         $order = Order::findOrFail($id);
 
-        // Clean the phone number (remove spaces, - etc) if necessary
-        $phone = $order->phone;
+        try {
+            $result = $courierService->checkFraud($order->phone);
 
-        // Call the BD Courier API
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.bd_courier.api_key'),
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-        ])->post('https://api.bdcourier.com/courier-check', [
-                    'phone' => $phone
-                ]);
+            if (($result['status'] ?? '') === 'success') {
+                return response()->json($result);
+            }
 
-        // Return the data to React
-        if ($response->successful()) {
-            return response()->json($response->json());
+            return response()->json([
+                'status' => 'error',
+                'message' => $result['message'] ?? 'Failed to check fraud score.',
+                'details' => $result['details'] ?? null,
+            ], 422);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Fraud checker error: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to connect to fraud database',
-            'details' => $response->body()
-        ], 500);
     }
 
 

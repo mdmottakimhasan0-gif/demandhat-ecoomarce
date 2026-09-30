@@ -213,6 +213,23 @@ export default function OrdersTable({
                                                 </span>
                                             </div>
                                         )}
+
+                                    {/* Courier Consignment Tag */}
+                                    {(order.courier_name || order.courier_consignment_id || order.courier_invoice_id) && (
+                                        <div className="mt-1">
+                                            <span
+                                                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${
+                                                    order.courier_name === "pathao"
+                                                        ? "bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300"
+                                                        : "bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300"
+                                                }`}
+                                                title={`Courier: ${order.courier_name || "Steadfast"} | CID: ${order.courier_consignment_id || order.courier_invoice_id}`}
+                                            >
+                                                <FiTruck size={10} />
+                                                {order.courier_name || "Steadfast"}: #{order.courier_consignment_id || order.courier_invoice_id}
+                                            </span>
+                                        </div>
+                                    )}
                                 </td>
 
                                 <td className="p-2 py-2 text-sm font-medium text-gray-800 dark:text-gray-200">
@@ -239,8 +256,16 @@ export default function OrdersTable({
 
                                         <button
                                             onClick={() => onSendCourier(order)}
-                                            className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-800 text-blue-500 dark:text-blue-300 transition-colors"
-                                            title="Send to Courier"
+                                            className={`p-2 rounded transition-colors ${
+                                                order.courier_consignment_id || order.courier_name
+                                                    ? "bg-green-50 hover:bg-green-100 dark:bg-green-950/40 text-green-600 dark:text-green-400"
+                                                    : "hover:bg-gray-100 dark:hover:bg-slate-800 text-blue-500 dark:text-blue-300"
+                                            }`}
+                                            title={
+                                                order.courier_name
+                                                    ? `Booked with ${order.courier_name} (${order.courier_consignment_id || order.courier_invoice_id})`
+                                                    : "Send to Courier"
+                                            }
                                         >
                                             <FiTruck size={16} />
                                         </button>

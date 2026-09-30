@@ -12,8 +12,8 @@ class FacebookCapiService
 
     public function __construct()
     {
-        $this->pixelId = env('VITE_FACEBOOK_PIXEL_ID');
-        $this->accessToken = env('FACEBOOK_CAPI_TOKEN');
+        $this->pixelId = \App\Models\SiteSetting::read('site.meta_pixel_id') ?: env('VITE_FACEBOOK_PIXEL_ID');
+        $this->accessToken = \App\Models\SiteSetting::read('site.meta_capi_token') ?: env('FACEBOOK_CAPI_TOKEN');
     }
 
     /**

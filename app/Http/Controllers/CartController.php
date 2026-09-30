@@ -18,6 +18,11 @@ class CartController extends Controller
 
         if (!empty($sessionCart)) {
             $products = Product::whereIn('id', array_keys($sessionCart))->get();
+            if ($products->count() !== count($sessionCart)) {
+                $validIds = $products->pluck('id')->toArray();
+                $sessionCart = array_intersect_key($sessionCart, array_flip($validIds));
+                session()->put('cart', $sessionCart);
+            }
 
             foreach ($products as $product) {
                 $qty = $sessionCart[$product->id];

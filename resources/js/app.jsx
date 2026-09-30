@@ -19,11 +19,27 @@ router.on("start", () => NProgress.start());
 router.on("finish", () => NProgress.done());
 
 router.on("navigate", (event) => {
+    const pageComponent = event.detail.page?.component || "";
+    // If navigating to a builder-created landing page, DO NOT fire the global site pixel
+    // Note: Customer/LandingPage is the store's main homepage, whereas Customer/LandingPageView is the landing page builder
+    if (pageComponent === "Customer/LandingPageView") {
+        return;
+    }
+
+    const pixelId = event.detail.page?.props?.sitePixel?.id;
+    const pixelEnabled = event.detail.page?.props?.sitePixel?.enabled !== false;
+    if (pixelId && pixelEnabled && !window._hasGlobalPixel) {
+        ReactPixel.init(pixelId, null, { autoConfig: true, debug: false });
+        window._hasGlobalPixel = true;
+    }
+
     const eventId =
         "pageview_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
 
-    // 1. FB Pixel SPA Tracking
-    ReactPixel.track("PageView", {}, { eventID: eventId });
+    // 1. FB Pixel SPA Tracking (only for main website)
+    if (window._hasGlobalPixel) {
+        ReactPixel.track("PageView", {}, { eventID: eventId });
+    }
 
     // 2. GTM SPA Tracking
     window.dataLayer.push({
@@ -47,10 +63,15 @@ createInertiaApp({
 
     setup({ el, App, props }) {
         const options = { autoConfig: true, debug: false };
-        const pixelId = import.meta.env.VITE_FACEBOOK_PIXEL_ID;
+        const initialPage = props.initialPage;
+        const sitePixel = initialPage?.props?.sitePixel;
+        const pixelId = sitePixel?.enabled ? sitePixel?.id : null;
+        const pageComponent = initialPage?.component || "";
+        const isLandingPage = pageComponent === "Customer/LandingPageView";
 
-        if (pixelId) {
+        if (pixelId && !isLandingPage) {
             ReactPixel.init(pixelId, null, options);
+            window._hasGlobalPixel = true;
 
             const initialEventId =
                 "pageview_" +

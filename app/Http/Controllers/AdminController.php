@@ -177,6 +177,7 @@ class AdminController extends Controller
             'contacts' => Contact::latest()->get(),
             'categories' => \App\Models\Category::orderBy('name')->get(),
             'orderProtection' => app(\App\Services\OrderProtection::class)->panel(),
+            'courierIntegration' => app(\App\Services\Courier\CourierIntegrationService::class)->panel(),
         ]);
     }
 

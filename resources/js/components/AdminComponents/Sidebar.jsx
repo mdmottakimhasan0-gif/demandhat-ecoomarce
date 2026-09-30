@@ -43,10 +43,15 @@ function Sidebar({
         >
             {/* Sidebar Header */}
             <div className="flex dark:text-white items-center justify-between px-3 h-16 border-b border-slate-200/60 dark:border-slate-800/80">
-                {!collapsed && (
-                    <h2 className="text-sm sm:text-base whitespace-nowrap font-bold tracking-tight text-slate-800 dark:text-white">
-                        DEMAND<span className="text-blue-600 dark:text-blue-400"> BAZAR</span>
-                    </h2>
+                {!collapsed ? (
+                    <div className="flex items-center gap-2 overflow-hidden">
+                        <img src="/logo.png" alt="Unity Haven" className="h-7 w-auto object-contain rounded shadow-sm" />
+                        <h2 className="text-sm sm:text-base whitespace-nowrap font-bold tracking-tight text-slate-800 dark:text-white">
+                            UNITY<span className="text-indigo-600 dark:text-indigo-400"> HAVEN</span>
+                        </h2>
+                    </div>
+                ) : (
+                    <img src="/logo.png" alt="UH" className="h-6 w-auto object-contain rounded shadow-sm" />
                 )}
 
                 <button

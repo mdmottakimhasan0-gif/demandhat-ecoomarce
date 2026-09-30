@@ -35,7 +35,7 @@ const LandingPage = ({
 
     return (
         <>
-            <Head title="Demand Bazar" />
+            <Head title="Unity Haven" />
             <div className="bg-slate-100">
                 <div className="w-full mx-auto">
                     <Toaster />

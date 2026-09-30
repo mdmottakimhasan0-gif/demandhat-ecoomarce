@@ -268,6 +268,41 @@ export default function OrderDetails({ order }) {
                                 <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">Payment Status</span>
                                 {getStatusBadge(order.payment_status, "payment")}
                             </div>
+
+                            {order.courier_name && (
+                                <div className="p-3 bg-blue-50/60 dark:bg-blue-950/30 rounded-xl border border-blue-100 dark:border-blue-900/50 space-y-1.5 text-xs">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-500 dark:text-gray-400 font-medium">Courier</span>
+                                        <span className="font-bold text-blue-700 dark:text-blue-300 uppercase">
+                                            {order.courier_name}
+                                        </span>
+                                    </div>
+                                    {order.courier_consignment_id && (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500 dark:text-gray-400">Consignment ID</span>
+                                            <span className="font-mono font-semibold text-gray-800 dark:text-gray-200">
+                                                {order.courier_consignment_id}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {order.courier_tracking_code && (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500 dark:text-gray-400">Tracking Code</span>
+                                            <span className="font-mono font-semibold text-gray-800 dark:text-gray-200">
+                                                {order.courier_tracking_code}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {order.courier_status && (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500 dark:text-gray-400">Courier Status</span>
+                                            <span className="font-semibold text-emerald-600 dark:text-emerald-400 capitalize">
+                                                {order.courier_status}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 

@@ -9,9 +9,10 @@ import { MdSettings, MdLightMode } from "react-icons/md";
 import { BiImage, BiUpload, BiX } from "react-icons/bi";
 import MarqueeForm from "@/components/AdminComponents/Settings/MarqueeForm";
 import OrderProtection from "@/components/AdminComponents/Settings/OrderProtection";
-import { FiShield } from "react-icons/fi";
+import CourierIntegration from "@/components/AdminComponents/Settings/CourierIntegration";
+import { FiShield, FiLink2 } from "react-icons/fi";
 
-function Setting({ heroes = [], sections = [], marquee = [], contacts = [], categories = [], orderProtection = null }) {
+function Setting({ heroes = [], sections = [], marquee = [], contacts = [], categories = [], orderProtection = null, courierIntegration = null }) {
     const [activeTab, setActiveTab] = useState("hero");
 
     // Modal States
@@ -241,10 +242,23 @@ function Setting({ heroes = [], sections = [], marquee = [], contacts = [], cate
                     >
                         <FiShield size={16} /> Order Protection
                     </button>
+                    <button
+                        onClick={() => setActiveTab("integrations")}
+                        className={`pb-3 text-sm font-medium tracking-tight transition-all border-b-2 whitespace-nowrap flex items-center gap-2 ${
+                            activeTab === "integrations"
+                                ? "border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
+                                : "border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                        }`}
+                    >
+                        <FiLink2 size={16} /> Integrations
+                    </button>
                 </div>
 
                 {/* TAB 5: ORDER PROTECTION */}
                 {activeTab === "protection" && orderProtection && <OrderProtection data={orderProtection} />}
+
+                {/* TAB 6: COURIER & FRAUD INTEGRATION */}
+                {activeTab === "integrations" && <CourierIntegration data={courierIntegration} />}
 
                 {/* TAB 1: HERO BANNERS */}
                 {activeTab === "hero" && (
