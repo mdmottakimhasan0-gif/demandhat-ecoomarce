@@ -12,9 +12,7 @@ import {
     FiRefreshCw,
     FiLink2,
     FiSend,
-    FiExternalLink,
     FiTarget,
-    FiInfo,
 } from "react-icons/fi";
 import { SiSpeedtest } from "react-icons/si";
 
@@ -606,9 +604,6 @@ export default function CourierIntegration({ data }) {
                                 onChange={(e) => form.setData("pathao_store_id", e.target.value)}
                             />
                         )}
-                        <p className="text-[11px] text-gray-500 mt-1">
-                            This store is used as the pickup location for your orders.
-                        </p>
                     </div>
                 </div>
 
@@ -700,9 +695,6 @@ export default function CourierIntegration({ data }) {
                             value={form.data.bd_courier_api_key}
                             onChange={(e) => form.setData("bd_courier_api_key", e.target.value)}
                         />
-                        <p className="text-[11px] text-gray-500 mt-1">
-                            Used to query Bangladesh nationwide delivery and cancellation histories via BD Courier database.
-                        </p>
                     </div>
 
                     <Row
@@ -742,22 +734,6 @@ export default function CourierIntegration({ data }) {
                     </div>
                 </div>
 
-                {/* Landing Isolation Notice Banner */}
-                <div className="p-4 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/60 dark:border-blue-800/40 text-xs text-blue-800 dark:text-blue-300 flex items-start gap-3">
-                    <FiInfo className="shrink-0 mt-0.5 text-blue-600 dark:text-blue-400" size={18} />
-                    <div className="space-y-1">
-                        <p className="font-semibold text-blue-900 dark:text-blue-200 text-sm">
-                            Landing Page vs Main Website Pixel Isolation:
-                        </p>
-                        <p className="leading-relaxed">
-                            • <strong>Main Website:</strong> Tracks standard store traffic using this Pixel ID. The old hardcoded ID (804272159369185) has been completely removed.
-                        </p>
-                        <p className="leading-relaxed">
-                            • <strong>Landing Pages:</strong> Each page created in the <strong>Landing Page Builder</strong> can have its own separate, independent Pixel ID configured in its Page Settings. The landing page tracker uses isolated <code>trackSingle</code> events so there is <strong>zero mismatch, collision, or double counting</strong> between your landing pages and main site.
-                        </p>
-                    </div>
-                </div>
-
                 <div className="space-y-4 pt-1">
                     <div>
                         <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
@@ -770,9 +746,6 @@ export default function CourierIntegration({ data }) {
                             value={form.data.meta_pixel_id}
                             onChange={(e) => form.setData("meta_pixel_id", e.target.value.replace(/\D/g, ""))}
                         />
-                        <p className="text-[11px] text-gray-500 mt-1">
-                            Enter your numeric Meta (Facebook) Dataset / Pixel ID. Leave blank if you don't want a pixel on the main website.
-                        </p>
                     </div>
 
                     <div>
@@ -796,9 +769,6 @@ export default function CourierIntegration({ data }) {
                             value={form.data.meta_capi_token}
                             onChange={(e) => form.setData("meta_capi_token", e.target.value)}
                         />
-                        <p className="text-[11px] text-gray-500 mt-1">
-                            If provided, server-side Conversions API events will be sent with deduplication eventIDs alongside browser events.
-                        </p>
                     </div>
                 </div>
             </div>
