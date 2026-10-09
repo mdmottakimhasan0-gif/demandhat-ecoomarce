@@ -72,6 +72,7 @@ const Checkout = ({ cartItems = [], totals = {}, auth, contact, deliveryConfig =
             return 0;
         }
 
+        const idx = area === "inside_dhaka" ? 0 : 1;
         const rates = deliveryConfig?.rates || {
             high: [300, 500],
             medium: [150, 250],
