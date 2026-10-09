@@ -56,6 +56,13 @@ const ProductCard = ({ product }) => {
                 </div>
             )}
 
+            {/* Free Delivery Offer Badge */}
+            {product.bussiness_class === "free" && (
+                <div className={`absolute ${discountPercentage > 0 ? "top-7" : "top-0"} left-0 z-10 bg-emerald-600 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-r-xl shadow-sm font-hindSiliguri tracking-wide`}>
+                    ফ্রি ডেলিভারি
+                </div>
+            )}
+
             {/* Cart Button (Add Only - Hidden when Out of Stock) */}
             {!isOutOfStock && (
                 <button

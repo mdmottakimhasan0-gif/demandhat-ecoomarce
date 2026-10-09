@@ -13,6 +13,11 @@ import {
     FiLink2,
     FiSend,
     FiTarget,
+    FiGift,
+    FiPackage,
+    FiInfo,
+    FiTag,
+    FiDollarSign,
 } from "react-icons/fi";
 import { SiSpeedtest } from "react-icons/si";
 
@@ -55,6 +60,7 @@ export default function CourierIntegration({ data }) {
     const pathao = data?.pathao || {};
     const fraud = data?.fraud || {};
     const pixel = data?.pixel || {};
+    const delivery = data?.delivery || {};
 
     const [showSteadfastSecret, setShowSteadfastSecret] = useState(false);
     const [showPathaoSecret, setShowPathaoSecret] = useState(false);
@@ -75,6 +81,12 @@ export default function CourierIntegration({ data }) {
     const [fraudTestResult, setFraudTestResult] = useState(null);
 
     const form = useForm({
+        // Delivery Charges & Free Shipping
+        delivery_all_free: delivery.all_free ?? false,
+        delivery_inside_dhaka: delivery.inside_dhaka ?? 60,
+        delivery_outside_dhaka: delivery.outside_dhaka ?? 120,
+        delivery_free_min_amount: delivery.free_min_amount ?? 0,
+
         // Steadfast
         steadfast_enabled: steadfast.enabled ?? false,
         steadfast_api_key: steadfast.api_key ?? "",
@@ -107,7 +119,7 @@ export default function CourierIntegration({ data }) {
         form.put("/admin/settings/courier-integration", {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success("Courier & Fraud integration settings saved!");
+                toast.success("Delivery & Integration settings saved!");
             },
             onError: (err) => {
                 toast.error("Failed to save settings: " + (Object.values(err)[0] || "Validation error"));
@@ -247,17 +259,37 @@ export default function CourierIntegration({ data }) {
             </div>
 
             {/* Quick Status Bar */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="bg-white dark:bg-[#1F2937] p-4 rounded-xl border border-gray-200 dark:border-[#374151] flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Delivery Rates</p>
+                        <p className="text-sm font-semibold text-slate-800 dark:text-gray-200 mt-0.5">
+                            {form.data.delivery_all_free ? (
+                                <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-bold text-xs">
+                                    <FiGift size={13} /> All Free (৳0)
+                                </span>
+                            ) : (
+                                <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs">
+                                    ৳{form.data.delivery_inside_dhaka} / ৳{form.data.delivery_outside_dhaka}
+                                </span>
+                            )}
+                        </p>
+                    </div>
+                    <span className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+                        <FiTruck size={20} />
+                    </span>
+                </div>
+
                 <div className="bg-white dark:bg-[#1F2937] p-4 rounded-xl border border-gray-200 dark:border-[#374151] flex items-center justify-between">
                     <div>
                         <p className="text-xs text-gray-500 dark:text-gray-400">Steadfast Courier</p>
                         <p className="text-sm font-semibold text-slate-800 dark:text-gray-200 mt-0.5">
                             {form.data.steadfast_enabled ? (
-                                <span className="text-green-600 dark:text-green-400 flex items-center gap-1">
+                                <span className="text-green-600 dark:text-green-400 flex items-center gap-1 text-xs">
                                     <FiCheckCircle size={14} /> Active
                                 </span>
                             ) : (
-                                <span className="text-gray-400">Disabled</span>
+                                <span className="text-gray-400 text-xs">Disabled</span>
                             )}
                         </p>
                     </div>
@@ -271,11 +303,11 @@ export default function CourierIntegration({ data }) {
                         <p className="text-xs text-gray-500 dark:text-gray-400">Pathao Courier</p>
                         <p className="text-sm font-semibold text-slate-800 dark:text-gray-200 mt-0.5">
                             {form.data.pathao_enabled ? (
-                                <span className="text-green-600 dark:text-green-400 flex items-center gap-1">
-                                    <FiCheckCircle size={14} /> Active ({form.data.pathao_environment})
+                                <span className="text-green-600 dark:text-green-400 flex items-center gap-1 text-xs">
+                                    <FiCheckCircle size={14} /> Active
                                 </span>
                             ) : (
-                                <span className="text-gray-400">Disabled</span>
+                                <span className="text-gray-400 text-xs">Disabled</span>
                             )}
                         </p>
                     </div>
@@ -289,11 +321,11 @@ export default function CourierIntegration({ data }) {
                         <p className="text-xs text-gray-500 dark:text-gray-400">Fraud Protection</p>
                         <p className="text-sm font-semibold text-slate-800 dark:text-gray-200 mt-0.5">
                             {form.data.bd_courier_api_key || form.data.steadfast_fraud_enabled ? (
-                                <span className="text-purple-600 dark:text-purple-400 flex items-center gap-1">
-                                    <FiShield size={14} /> Protected ({form.data.fraud_provider})
+                                <span className="text-purple-600 dark:text-purple-400 flex items-center gap-1 text-xs">
+                                    <FiShield size={14} /> Protected
                                 </span>
                             ) : (
-                                <span className="text-gray-400">Not Configured</span>
+                                <span className="text-gray-400 text-xs">Not Configured</span>
                             )}
                         </p>
                     </div>
@@ -311,7 +343,7 @@ export default function CourierIntegration({ data }) {
                                     <FiCheckCircle size={14} /> Active
                                 </span>
                             ) : !form.data.meta_pixel_enabled ? (
-                                <span className="text-gray-400">Disabled</span>
+                                <span className="text-gray-400 text-xs">Disabled</span>
                             ) : (
                                 <span className="text-amber-500 text-xs">Not Configured</span>
                             )}
@@ -320,6 +352,146 @@ export default function CourierIntegration({ data }) {
                     <span className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                         <FiTarget size={20} />
                     </span>
+                </div>
+            </div>
+
+            {/* SECTION 0: DELIVERY CHARGES & FREE SHIPPING */}
+            <div className="bg-white dark:bg-[#1F2937] rounded-xl shadow border border-gray-200 dark:border-[#374151] p-6 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 dark:border-slate-700/60 pb-4 gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg">
+                            <FiTruck size={20} />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-base font-semibold text-slate-800 dark:text-gray-200">
+                                    Delivery Charge & Free Shipping Settings
+                                </h3>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
+                                    Checkout & Store
+                                </span>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                Configure website checkout delivery fees (inside/outside Dhaka) and free delivery offers.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs font-semibold text-slate-700 dark:text-gray-300">
+                            সকল অর্ডারে ফ্রি ডেলিভারি (All Free)
+                        </span>
+                        <Toggle
+                            value={form.data.delivery_all_free}
+                            onChange={(val) => form.setData("delivery_all_free", val)}
+                        />
+                    </div>
+                </div>
+
+                {/* Free Shipping Highlight Banner */}
+                {form.data.delivery_all_free ? (
+                    <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-emerald-500 text-white shrink-0">
+                            <FiGift size={20} />
+                        </div>
+                        <div className="text-xs text-emerald-800 dark:text-emerald-200">
+                            <strong className="block font-bold text-sm">🎉 সব পণ্যে ফ্রি ডেলিভারি সক্রিয় আছে!</strong>
+                            বর্তমানে ওয়েবসাইটের সমস্ত অর্ডারে ডেলিভারি চার্জ সম্পূর্ণ ফ্রি (৳০) থাকবে। নিচের কাস্টম রেটগুলো তখন কার্যকর হবে না।
+                        </div>
+                    </div>
+                ) : (
+                    <div className="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-blue-500 text-white shrink-0">
+                                <FiGift size={18} />
+                            </div>
+                            <div>
+                                <h4 className="text-xs font-bold text-blue-900 dark:text-blue-200">
+                                    সর্বনিম্ন অর্ডারে ফ্রি ডেলিভারি অফার (Threshold)
+                                </h4>
+                                <p className="text-[11px] text-blue-700 dark:text-blue-300 mt-0.5">
+                                    নির্দিষ্ট টাকার ওপরের সমস্ত অর্ডারে স্বয়ংক্রিয়ভাবে ফ্রি ডেলিভারি দিতে চান?
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">টাকার পরিমাণ (৳):</span>
+                            <input
+                                type="number"
+                                min="0"
+                                placeholder="0 = বন্ধ"
+                                className="w-32 h-9 px-3 rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-white text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                                value={form.data.delivery_free_min_amount}
+                                onChange={(e) => form.setData("delivery_free_min_amount", e.target.value)}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Delivery Rates */}
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                            ডেলিভারি চার্জ কাস্টমাইজেশন (Delivery Charge Settings)
+                        </h4>
+                        <span className="text-[11px] text-gray-400">
+                            *চেকআউট পেজে এই চার্জগুলো যুক্ত হবে
+                        </span>
+                    </div>
+
+                    <div className="p-5 rounded-xl border border-gray-200 dark:border-[#374151] bg-gray-50/60 dark:bg-slate-900/60">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-bold text-slate-800 dark:text-gray-200 flex items-center gap-2">
+                                <FiTruck className="text-blue-500" size={16} /> ডেলিভারি চার্জ (Delivery Fee)
+                            </span>
+                            <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/40 px-2 py-0.5 rounded-full">
+                                ফ্ল্যাট রেট
+                            </span>
+                        </div>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mb-4">
+                            ওয়েবসাইট চেকআউট পেজে ঢাকার ভিতরে ও বাইরে কাস্টমারদের জন্য নির্ধারিত ডেলিভারি চার্জ।
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 block mb-1">
+                                    ঢাকার ভিতরে (৳):
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    className={inputClass}
+                                    placeholder="60"
+                                    value={form.data.delivery_inside_dhaka}
+                                    onChange={(e) => form.setData("delivery_inside_dhaka", e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold text-gray-700 dark:text-gray-300 block mb-1">
+                                    ঢাকার বাইরে (৳):
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    className={inputClass}
+                                    placeholder="120"
+                                    value={form.data.delivery_outside_dhaka}
+                                    onChange={(e) => form.setData("delivery_outside_dhaka", e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Specific Product Free Shipping Guide */}
+                <div className="p-4 rounded-xl border border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-emerald-950/20 flex items-start gap-3">
+                    <div className="p-2 rounded-lg bg-emerald-600 text-white shrink-0 mt-0.5">
+                        <FiTag size={16} />
+                    </div>
+                    <div className="text-xs text-slate-700 dark:text-gray-300 leading-relaxed">
+                        <strong className="block text-emerald-800 dark:text-emerald-300 font-bold mb-1">
+                            🎯 কোনো নির্দিষ্ট পণ্যে ফ্রি ডেলিভারি অফার দেওয়ার নিয়ম:
+                        </strong>
+                        নির্দিষ্ট পণ্যে ফ্রি ডেলিভারি দিতে চাইলে <strong>Products &gt; Add/Edit Product</strong> এ যান। সেখানে <strong>Business Class</strong> অপশন থেকে <strong>"🎉 Free Delivery / ফ্রি ডেলিভারি (৳0)"</strong> সিলেক্ট করে সেভ করুন। কাস্টমার সেই পণ্য অর্ডার করলে চেকআউটে অটোমেটিক ফ্রি ডেলিভারি প্রযোজ্য হবে।
+                    </div>
                 </div>
             </div>
 

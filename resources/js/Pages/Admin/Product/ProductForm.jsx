@@ -252,21 +252,30 @@ function ProductForm({ categories = [] }) {
                         </div>
 
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Business Class
-                            </label>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    Delivery / Business Class
+                                </label>
+                                {data.bussiness_class === "free" && (
+                                    <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 dark:text-emerald-400 px-2 py-0.5 rounded-full">
+                                        🎉 Free Shipping Offer
+                                    </span>
+                                )}
+                            </div>
                             <select
                                 name="bussiness_class"
-                                value={data.bussiness_class}
+                                value={data.bussiness_class || "normal"}
                                 onChange={handleChange}
                                 className="w-full p-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm dark:text-white"
                             >
-                                <option value="">Select Class</option>
-                                <option value="free">Free</option>
-                                <option value="normal">Normal</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
+                                <option value="normal">সাধারণ ডেলিভারি চার্জ (Standard Rate)</option>
+                                <option value="free">🎉 Free Delivery / ফ্রি ডেলিভারি (৳0)</option>
+                                {data.bussiness_class === "medium" && <option value="medium">Medium (Legacy)</option>}
+                                {data.bussiness_class === "high" && <option value="high">High (Legacy)</option>}
                             </select>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
+                                এই পণ্যে ফ্রি ডেলিভারি অফার চালু করতে &apos;Free Delivery&apos; সিলেক্ট করুন।
+                            </p>
                         </div>
 
                         <div>

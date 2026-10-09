@@ -278,7 +278,7 @@
         var out = function (k, v) { var el = form.querySelector('[data-of="' + k + '"]'); if (el) el.textContent = v; };
 
         function calc() {
-            var sub = 0, hi = 0, me = 0, count = 0;
+            var sub = 0, hi = 0, me = 0, normal = 0, free = 0, count = 0;
             form.querySelectorAll('input[name="pick[]"]').forEach(function (i) {
                 var q = form.querySelector('input[name="qty[' + i.value + ']"]');
                 var on = i.checked;
@@ -286,18 +286,23 @@
                 if (!on) return;
                 var qty = q ? Math.max(1, parseInt(q.value, 10) || 1) : 1;
                 var price = parseFloat(i.getAttribute('data-price')) || 0;
-                var cls = i.getAttribute('data-class');
+                var cls = (i.getAttribute('data-class') || 'normal').toLowerCase();
                 sub += price * qty; count++;
-                if (cls === 'high') hi += qty; else if (cls === 'medium') me += qty;
+                if (cls === 'free') free += qty;
+                else if (cls === 'high') hi += qty;
+                else if (cls === 'medium') me += qty;
+                else normal += qty;
             });
             var area = form.elements.delivery_area ? form.elements.delivery_area.value : 'inside_dhaka';
             var idx = area === 'inside_dhaka' ? 0 : 1;
             var fee = 0;
             if (count) {
-                if (cfg.fixed && cfg.fixed[idx] !== null && cfg.fixed[idx] !== undefined) fee = cfg.fixed[idx];
-                else if (hi) fee = hi * cfg.t.high[idx];
-                else if (me) fee = me * cfg.t.medium[idx];
-                else fee = cfg.t.base[idx];
+                if (cfg.all_free) fee = 0;
+                else if (cfg.fixed && cfg.fixed[idx] !== null && cfg.fixed[idx] !== undefined) fee = cfg.fixed[idx];
+                else if (free > 0 && hi === 0 && me === 0 && normal === 0) fee = 0;
+                else if (hi && cfg.t && cfg.t.high) fee = hi * cfg.t.high[idx];
+                else if (me && cfg.t && cfg.t.medium) fee = me * cfg.t.medium[idx];
+                else if (cfg.t && cfg.t.base) fee = cfg.t.base[idx];
             }
             out('subtotal', money(sub)); out('delivery', money(fee)); out('total', money(sub + fee));
             if (btn && !btn.disabled && base) btn.textContent = count ? base + ' - ' + money(sub + fee) : base;

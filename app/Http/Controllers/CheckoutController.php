@@ -35,6 +35,11 @@ class CheckoutController extends Controller
             'totals' => $cartData['totals'],
             'auth' => ['user' => $userData],
             'contact' => $contact,
+            'deliveryConfig' => [
+                'all_free' => \App\Services\DeliveryFee::isAllFree(),
+                'free_min_amount' => \App\Services\DeliveryFee::freeMinAmount(),
+                'rates' => \App\Services\DeliveryFee::rates(),
+            ],
         ]);
     }
 
@@ -69,8 +74,8 @@ class CheckoutController extends Controller
         }
 
         // 3. Calculate Final Delivery Fee
-        $deliveryFee = $this->calculateDeliveryFee($items, $request->delivery_area);
         $subtotal = $cartData['totals']['itemTotal'];
+        $deliveryFee = $this->calculateDeliveryFee($items, $request->delivery_area, $subtotal);
         $grandTotal = $subtotal + $deliveryFee;
 
         try {
@@ -200,10 +205,10 @@ class CheckoutController extends Controller
         ];
     }
 
-    private function calculateDeliveryFee($items, $area)
+    private function calculateDeliveryFee($items, $area, $subtotal = null)
     {
         // Shared with the landing page order form (same rules, single source of truth).
-        return app(\App\Services\DeliveryFee::class)->calculate($items, $area);
+        return app(\App\Services\DeliveryFee::class)->calculate($items, $area, null, $subtotal);
     }
 
     public function success()

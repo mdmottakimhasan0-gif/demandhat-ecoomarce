@@ -369,7 +369,7 @@ class OrderFormElement extends AbstractElement
             .$field($fid.'_d', $t('label_area', 'Delivery area').' <span aria-hidden="true">*</span>', '<select class="lp-input" id="'.$fid.'_d" name="delivery_area" required><option value="inside_dhaka">'.$t('label_inside', 'Inside Dhaka').'</option><option value="outside_dhaka">'.$t('label_outside', 'Outside Dhaka').'</option></select>', 'delivery_area')
             .($cfg['show_notes'] ? $field($fid.'_o', 'Order notes', '<textarea class="lp-input" id="'.$fid.'_o" name="notes" rows="2"></textarea>', 'notes') : '');
 
-        $fees = json_encode(['t' => DeliveryFee::TABLE, 'fixed' => $cfg['fixed_fee'], 'sym' => $cfg['currency_symbol'], 'mode' => $cfg['mode']], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
+        $fees = json_encode(['t' => DeliveryFee::rates(), 'all_free' => DeliveryFee::isAllFree(), 'fixed' => $cfg['fixed_fee'], 'sym' => $cfg['currency_symbol'], 'mode' => $cfg['mode']], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
         $hp = e(config('landing.forms.honeypot_field'));
         $attrs = ['class' => 'lp-form lp-order', 'method' => 'post', 'novalidate' => true, 'data-lp-form' => self::safeId($node['id']), 'data-lp-order' => $fees] + $this->trackAttrs($node, $ctx, 'submit');
 

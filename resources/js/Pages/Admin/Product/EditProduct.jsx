@@ -366,20 +366,30 @@ function EditProduct({ categories = [], product = {} }) {
                             />
                         </div>
                         <div>
-                            <label className="block mb-1 text-xs font-medium dark:text-gray-400">
-                                Business Class
-                            </label>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="text-xs font-medium dark:text-gray-400">
+                                    Delivery / Business Class
+                                </label>
+                                {data.bussiness_class === "free" && (
+                                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 dark:text-emerald-400 px-2 py-0.5 rounded-full">
+                                        🎉 Free Shipping Offer
+                                    </span>
+                                )}
+                            </div>
                             <select
                                 name="bussiness_class"
-                                value={data.bussiness_class}
+                                value={data.bussiness_class || "normal"}
                                 onChange={handleChange}
                                 className="w-full p-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-gray-700 rounded text-sm dark:text-white"
                             >
-                                <option value="free">Free</option>
-                                <option value="normal">Normal</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
+                                <option value="normal">সাধারণ ডেলিভারি চার্জ (Standard Rate)</option>
+                                <option value="free">🎉 Free Delivery / ফ্রি ডেলিভারি (৳0)</option>
+                                {data.bussiness_class === "medium" && <option value="medium">Medium (Legacy)</option>}
+                                {data.bussiness_class === "high" && <option value="high">High (Legacy)</option>}
                             </select>
+                            <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
+                                এই নির্দিষ্ট পণ্যে ফ্রি শিপিং অফার দিতে &apos;Free Delivery&apos; সিলেক্ট করুন।
+                            </p>
                         </div>
 
                         {/* --- ADDED INITIAL RATING FIELD HERE --- */}

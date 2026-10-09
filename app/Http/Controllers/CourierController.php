@@ -44,6 +44,16 @@ class CourierController extends Controller
             'meta_pixel_enabled' => 'nullable|boolean',
             'meta_pixel_id' => 'nullable|string|max:50',
             'meta_capi_token' => 'nullable|string|max:500',
+
+            // Delivery Charge & Shipping Settings
+            'delivery_all_free' => 'nullable|boolean',
+            'delivery_inside_dhaka' => 'nullable|numeric|min:0',
+            'delivery_outside_dhaka' => 'nullable|numeric|min:0',
+            'delivery_medium_inside' => 'nullable|numeric|min:0',
+            'delivery_medium_outside' => 'nullable|numeric|min:0',
+            'delivery_high_inside' => 'nullable|numeric|min:0',
+            'delivery_high_outside' => 'nullable|numeric|min:0',
+            'delivery_free_min_amount' => 'nullable|numeric|min:0',
         ]);
 
         $this->courierService->saveSettings($validated);

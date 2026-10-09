@@ -111,6 +111,12 @@ const ProductInfo = ({
                         </>
                     )}
                 </span>
+
+                {product.bussiness_class === "free" && (
+                    <span className="flex items-center gap-1 px-3 py-1 rounded-full text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        🎉 ফ্রি ডেলিভারি অফার
+                    </span>
+                )}
             </div>
 
             {product.quick_view && (

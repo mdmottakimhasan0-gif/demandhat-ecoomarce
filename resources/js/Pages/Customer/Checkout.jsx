@@ -12,7 +12,7 @@ import { TiWarning } from "react-icons/ti";
 import { FaWhatsapp } from "react-icons/fa6";
 import { IoMdCall } from "react-icons/io";
 
-const Checkout = ({ cartItems = [], totals = {}, auth, contact }) => {
+const Checkout = ({ cartItems = [], totals = {}, auth, contact, deliveryConfig = {} }) => {
     const [processingId, setProcessingId] = useState(null);
     const [showPopup, setShowPopup] = useState(false); // New state for popup
 
@@ -52,37 +52,40 @@ const Checkout = ({ cartItems = [], totals = {}, auth, contact }) => {
 
     // 3. Logic: Delivery Fee Calculation
     const calculateDeliveryFee = (area, items) => {
-        // ... calculation logic stays the same ...
         if (!area || !items || items.length === 0) return 0;
-        const highItems = items.filter(
-            (item) => item.bussiness_class === "high",
-        );
-        const mediumItems = items.filter(
-            (item) => item.bussiness_class === "medium",
-        );
-        const normalItems = items.filter(
-            (item) =>
-                !item.bussiness_class || item.bussiness_class === "normal",
-        );
 
-        if (highItems.length > 0) {
-            const totalQty = highItems.reduce(
-                (sum, item) => sum + item.quantity,
-                0,
-            );
-            return area === "inside_dhaka" ? totalQty * 300 : totalQty * 500;
+        // 1. If All Products Free Delivery is active globally
+        if (deliveryConfig?.all_free) {
+            return 0;
         }
-        if (mediumItems.length > 0) {
-            const totalQty = mediumItems.reduce(
-                (sum, item) => sum + item.quantity,
-                0,
-            );
-            return area === "inside_dhaka" ? totalQty * 150 : totalQty * 250;
+
+        // 2. If a minimum order amount for free delivery is set, check subtotal
+        const freeMinAmount = Number(deliveryConfig?.free_min_amount || 0);
+        let subTotal = 0;
+        if (totals && totals.itemTotal) {
+            subTotal =
+                typeof totals.itemTotal === "string"
+                    ? parseFloat(totals.itemTotal.replace(/[^0-9.-]+/g, ""))
+                    : Number(totals.itemTotal);
         }
-        if (normalItems.length > 0) {
-            return area === "inside_dhaka" ? 60 : 120;
+        if (freeMinAmount > 0 && subTotal >= freeMinAmount) {
+            return 0;
         }
-        return 0;
+
+        const rates = deliveryConfig?.rates || {
+            high: [300, 500],
+            medium: [150, 250],
+            base: [60, 120],
+        };
+        const baseRate = rates.base ? rates.base[idx] : (idx === 0 ? 60 : 120);
+
+        // If all items in cart are marked as free shipping
+        const isCartAllFree = items.every((item) => item.bussiness_class === "free");
+        if (isCartAllFree) {
+            return 0;
+        }
+
+        return baseRate;
     };
 
     // 4. Effect: Update totals
@@ -250,6 +253,8 @@ const Checkout = ({ cartItems = [], totals = {}, auth, contact }) => {
                                 setData={setData}
                                 errors={errors}
                                 deliveryFee={summary.deliveryFee}
+                                deliveryConfig={deliveryConfig}
+                                cartItems={cartItems}
                             />
 
                             <div className="mt-4 sm:mt-8">
@@ -277,6 +282,7 @@ const Checkout = ({ cartItems = [], totals = {}, auth, contact }) => {
                             updateQuantity={updateQuantity}
                             removeItem={removeItem}
                             processingId={processingId}
+                            deliveryConfig={deliveryConfig}
                         />
                     </div>
                 </div>

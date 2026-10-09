@@ -206,7 +206,13 @@ const Products = ({ products = [], categories = [], filters = {} }) => {
                                             </span>
                                         </td>
                                         <td className="p-4 text-sm capitalize text-center text-gray-800 dark:text-gray-200">
-                                            {product.bussiness_class}
+                                            {product.bussiness_class === "free" ? (
+                                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 inline-flex items-center gap-1">
+                                                    🎉 Free Shipping
+                                                </span>
+                                            ) : (
+                                                product.bussiness_class
+                                            )}
                                         </td>
                                         <td className="p-4 text-right">
                                             <div className="flex justify-end gap-2">

@@ -112,6 +112,16 @@ class CourierIntegrationService
                 'capi_token' => (string) $this->get('meta_capi_token', ''),
                 'is_configured' => !empty($this->get('meta_pixel_id')),
             ],
+            'delivery' => [
+                'all_free' => (bool) (SiteSetting::read('delivery.all_free') ?? false),
+                'inside_dhaka' => (int) SiteSetting::read('delivery.inside_dhaka', 60),
+                'outside_dhaka' => (int) SiteSetting::read('delivery.outside_dhaka', 120),
+                'medium_inside' => (int) SiteSetting::read('delivery.medium_inside', 150),
+                'medium_outside' => (int) SiteSetting::read('delivery.medium_outside', 250),
+                'high_inside' => (int) SiteSetting::read('delivery.high_inside', 300),
+                'high_outside' => (int) SiteSetting::read('delivery.high_outside', 500),
+                'free_min_amount' => (int) SiteSetting::read('delivery.free_delivery_min_amount', 0),
+            ],
         ];
     }
 
@@ -120,6 +130,38 @@ class CourierIntegrationService
      */
     public function saveSettings(array $data): void
     {
+        // Delivery Charges & Free Shipping
+        if (isset($data['delivery_all_free'])) {
+            SiteSetting::write('delivery.all_free', (bool) $data['delivery_all_free']);
+        }
+        if (array_key_exists('delivery_inside_dhaka', $data) && $data['delivery_inside_dhaka'] !== null) {
+            $insideRate = (int) $data['delivery_inside_dhaka'];
+            SiteSetting::write('delivery.inside_dhaka', $insideRate);
+            SiteSetting::write('delivery.medium_inside', $insideRate);
+            SiteSetting::write('delivery.high_inside', $insideRate);
+        }
+        if (array_key_exists('delivery_outside_dhaka', $data) && $data['delivery_outside_dhaka'] !== null) {
+            $outsideRate = (int) $data['delivery_outside_dhaka'];
+            SiteSetting::write('delivery.outside_dhaka', $outsideRate);
+            SiteSetting::write('delivery.medium_outside', $outsideRate);
+            SiteSetting::write('delivery.high_outside', $outsideRate);
+        }
+        if (array_key_exists('delivery_medium_inside', $data) && $data['delivery_medium_inside'] !== null) {
+            SiteSetting::write('delivery.medium_inside', (int) $data['delivery_medium_inside']);
+        }
+        if (array_key_exists('delivery_medium_outside', $data) && $data['delivery_medium_outside'] !== null) {
+            SiteSetting::write('delivery.medium_outside', (int) $data['delivery_medium_outside']);
+        }
+        if (array_key_exists('delivery_high_inside', $data) && $data['delivery_high_inside'] !== null) {
+            SiteSetting::write('delivery.high_inside', (int) $data['delivery_high_inside']);
+        }
+        if (array_key_exists('delivery_high_outside', $data) && $data['delivery_high_outside'] !== null) {
+            SiteSetting::write('delivery.high_outside', (int) $data['delivery_high_outside']);
+        }
+        if (array_key_exists('delivery_free_min_amount', $data) && $data['delivery_free_min_amount'] !== null) {
+            SiteSetting::write('delivery.free_delivery_min_amount', (int) $data['delivery_free_min_amount']);
+        }
+
         // Global Website Meta Pixel
         if (isset($data['meta_pixel_enabled'])) {
             SiteSetting::write('site.meta_pixel_enabled', (bool) $data['meta_pixel_enabled']);

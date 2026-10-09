@@ -1,7 +1,24 @@
 import React from "react";
 import { User, Phone, MapPin, Truck, Banknote } from "lucide-react";
 
-export default function ShippingForm({ data, setData, errors, deliveryFee }) {
+export default function ShippingForm({
+    data,
+    setData,
+    errors,
+    deliveryFee,
+    deliveryConfig = {},
+    cartItems = [],
+}) {
+    const rates = deliveryConfig?.rates || {
+        high: [300, 500],
+        medium: [150, 250],
+        base: [60, 120],
+    };
+    const isAllFree = deliveryConfig?.all_free;
+    const isCartAllFree =
+        cartItems?.length > 0 &&
+        cartItems.every((it) => it.bussiness_class === "free");
+    const isFree = isAllFree || isCartAllFree || deliveryFee === 0;
     return (
         <div className="font-hindSiliguri bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-6 mb-6">
             <h2 className="text-xl font-bold  text-gray-900 mb-6 flex items-center gap-2">
@@ -74,58 +91,75 @@ export default function ShippingForm({ data, setData, errors, deliveryFee }) {
 
                 {/* DELIVERY AREA RADIO BUTTONS */}
                 <div className="md:col-span-2 mt-1 sm:mt-4">
-                    <label className="block  font-bold text-gray-700 mb-3">
-                        ডেলিভারি এরিয়া সিলেক্ট করুন *
-                    </label>
+                    <div className="flex items-center justify-between mb-3">
+                        <label className="block font-bold text-gray-700">
+                            ডেলিভারি এরিয়া সিলেক্ট করুন *
+                        </label>
+                        {isFree && (
+                            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                                🎉 ফ্রি ডেলিভারি অফার সক্রিয়
+                            </span>
+                        )}
+                    </div>
                     <div className="grid grid-cols-2 gap-2 sm:gap-4">
                         {/* Inside Dhaka */}
                         <label
-                            className={`flex items-center p-1 sm:p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                            className={`flex items-center justify-between p-2.5 sm:p-4 border-2 rounded-xl cursor-pointer transition-all ${
                                 data.delivery_area === "inside_dhaka"
-                                    ? "border-green-600 bg-green-50"
+                                    ? "border-green-600 bg-green-50 shadow-sm"
                                     : "border-gray-200 hover:border-green-300"
                             }`}
                         >
-                            <input
-                                type="radio"
-                                name="delivery_area"
-                                value="inside_dhaka"
-                                checked={data.delivery_area === "inside_dhaka"}
-                                onChange={(e) =>
-                                    setData("delivery_area", e.target.value)
-                                }
-                                className="sm:w-5 sm:h-5 w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
-                            />
-                            <div className=" ml-2 sm:ml-3">
-                                <span className="block font-bold text-gray-900">
-                                    ঢাকার ভিতরে
-                                </span>
+                            <div className="flex items-center">
+                                <input
+                                    type="radio"
+                                    name="delivery_area"
+                                    value="inside_dhaka"
+                                    checked={data.delivery_area === "inside_dhaka"}
+                                    onChange={(e) =>
+                                        setData("delivery_area", e.target.value)
+                                    }
+                                    className="sm:w-5 sm:h-5 w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                                />
+                                <div className="ml-2 sm:ml-3">
+                                    <span className="block font-bold text-gray-900 text-sm sm:text-base">
+                                        ঢাকার ভিতরে
+                                    </span>
+                                </div>
                             </div>
+                            <span className="text-xs sm:text-sm font-bold text-emerald-600">
+                                {isFree ? "ফ্রি" : `৳${rates.base?.[0] ?? 60}`}
+                            </span>
                         </label>
 
                         {/* Outside Dhaka */}
                         <label
-                            className={`flex items-center sm:p-4 p-1 border-2 rounded-xl cursor-pointer transition-all ${
+                            className={`flex items-center justify-between p-2.5 sm:p-4 border-2 rounded-xl cursor-pointer transition-all ${
                                 data.delivery_area === "outside_dhaka"
-                                    ? "border-green-600 bg-green-50"
+                                    ? "border-green-600 bg-green-50 shadow-sm"
                                     : "border-gray-200 hover:border-green-300"
                             }`}
                         >
-                            <input
-                                type="radio"
-                                name="delivery_area"
-                                value="outside_dhaka"
-                                checked={data.delivery_area === "outside_dhaka"}
-                                onChange={(e) =>
-                                    setData("delivery_area", e.target.value)
-                                }
-                                className="sm:w-5 sm:h-5 w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
-                            />
-                            <div className="ml-3">
-                                <span className="block font-bold text-gray-900">
-                                    ঢাকার বাইরে
-                                </span>
+                            <div className="flex items-center">
+                                <input
+                                    type="radio"
+                                    name="delivery_area"
+                                    value="outside_dhaka"
+                                    checked={data.delivery_area === "outside_dhaka"}
+                                    onChange={(e) =>
+                                        setData("delivery_area", e.target.value)
+                                    }
+                                    className="sm:w-5 sm:h-5 w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                                />
+                                <div className="ml-2 sm:ml-3">
+                                    <span className="block font-bold text-gray-900 text-sm sm:text-base">
+                                        ঢাকার বাইরে
+                                    </span>
+                                </div>
                             </div>
+                            <span className="text-xs sm:text-sm font-bold text-emerald-600">
+                                {isFree ? "ফ্রি" : `৳${rates.base?.[1] ?? 120}`}
+                            </span>
                         </label>
                     </div>
 

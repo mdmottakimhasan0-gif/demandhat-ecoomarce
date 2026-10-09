@@ -33,6 +33,12 @@ export default function OrderSummary({
                                     {item.name}
                                 </h4>
 
+                                {item.bussiness_class === "free" && (
+                                    <span className="inline-block mt-0.5 text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded font-bold">
+                                        🎉 ফ্রি ডেলিভারি অফার
+                                    </span>
+                                )}
+
                                 {/* Quantity Controls */}
                                 <div className="flex flex-col gap-1 mt-2">
                                     <div className="flex items-center gap-3">
@@ -112,12 +118,20 @@ export default function OrderSummary({
                     <span>Subtotal</span>
                     <span>TK {totals.itemTotal?.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                     <span>Delivery Fee</span>
                     <span className="text-green-600 font-hindSiliguri font-bold">
-                        {data.delivery_area
-                            ? `TK ${summary.deliveryFee}`
-                            : "Area সিলেক্ট করুন"}
+                        {data.delivery_area ? (
+                            summary.deliveryFee === 0 ? (
+                                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full text-xs">
+                                    ফ্রি ডেলিভারি (FREE)
+                                </span>
+                            ) : (
+                                `TK ${summary.deliveryFee}`
+                            )
+                        ) : (
+                            "Area সিলেক্ট করুন"
+                        )}
                     </span>
                 </div>
                 <div className="flex justify-between border-t pt-2 text-lg font-bold">
