@@ -24,7 +24,7 @@ class CustomerController extends Controller
     {
         $products = cache()->remember('landing_products', 86400, function () {
             return Product::with('category:id,name')
-                ->select('id', 'name', 'price', 'discount', 'image', 'stock', 'category_id', 'initial_rating', 'slug')
+                ->select('id', 'name', 'price', 'discount', 'image', 'stock', 'category_id', 'initial_rating', 'slug', 'bussiness_class')
                 ->get();
         });
 
@@ -37,7 +37,22 @@ class CustomerController extends Controller
         });
 
         $sections = cache()->remember('landing_sections', 86400, function () {
-            return LandingSection::select('id', 'category_id', 'category_name')->get();
+            $configured = LandingSection::select('id', 'category_id', 'category_name')->get();
+            if ($configured->isNotEmpty()) {
+                return $configured;
+            }
+
+            // Fallback: If no sections are configured in Admin > Settings > Sections,
+            // automatically display all categories that have products!
+            return Category::whereHas('products')
+                ->get()
+                ->map(function ($cat, $index) {
+                    return (object) [
+                        'id' => $index + 1,
+                        'category_id' => $cat->id,
+                        'category_name' => $cat->name,
+                    ];
+                });
         });
 
         return inertia('Customer/LandingPage', [

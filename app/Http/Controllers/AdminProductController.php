@@ -136,8 +136,9 @@ class AdminProductController extends Controller
                 }
             }
 
-            // Bust landing page product cache so the new product appears immediately
+            // Bust landing page product and sections cache so the new product appears immediately
             Cache::forget('landing_products');
+            Cache::forget('landing_sections');
 
             return redirect()->to('/admin/products')->with('success', 'Product created successfully!');
         });
@@ -251,8 +252,9 @@ class AdminProductController extends Controller
             'discount' => $validated['discount'],
         ]);
 
-        // Bust landing page product cache so the update appears immediately
+        // Bust landing page product and sections cache so the update appears immediately
         Cache::forget('landing_products');
+        Cache::forget('landing_sections');
 
         return redirect()->to('/admin/products')->with('success', 'Product updated successfully!');
     }
@@ -322,6 +324,7 @@ class AdminProductController extends Controller
 
         // Bust landing page product cache so deleted product disappears immediately
         Cache::forget('landing_products');
+        Cache::forget('landing_sections');
 
         return redirect()->back()->with('success', 'Product and all associated media deleted.');
     }
