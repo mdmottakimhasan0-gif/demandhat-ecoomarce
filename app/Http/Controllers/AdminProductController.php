@@ -143,7 +143,7 @@ class AdminProductController extends Controller
                 'description' => $validated['productDetails'],
                 'specification' => $validated['specification'] ?? null,
                 'image' => $imagePath,
-                'quick_view' => $validated['quick_view'] ?? null,
+                'quick_view' => $validated['quick_view'] ?? '',
                 'short_description' => $validated['short_description'] ?? null,
                 'bussiness_class' => $validated['bussiness_class'],
                 'discount' => $validated['discount'] ?? 0,

@@ -530,6 +530,8 @@ class AiChatbotService
             'colors' => !empty($colors) ? array_unique($colors) : null,
             'sizes' => !empty($sizes) ? array_unique($sizes) : null,
             'description' => "<p>{$name} - সেরা মানের আকর্ষণীয় পণ্য। এখনই অর্ডার করুন।</p>",
+            'quick_view' => "<p>{$name} - সেরা কোয়ালিটি এবং দ্রুত ডেলিভারি।</p>",
+            'short_description' => $name,
             'bussiness_class' => 'normal',
             'discount' => 0,
             'initial_rating' => 4.8,
