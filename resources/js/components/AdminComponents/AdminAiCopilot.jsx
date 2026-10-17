@@ -5,14 +5,10 @@ import {
     FiX,
     FiSend,
     FiKey,
-    FiCheck,
     FiExternalLink,
-    FiBarChart2,
-    FiPlusCircle,
-    FiGlobe,
-    FiSettings,
-    FiHelpCircle,
+    FiMinimize2,
     FiAlertCircle,
+    FiMessageSquare,
 } from "react-icons/fi";
 import { Sparkles } from "lucide-react";
 import { FaRobot } from "react-icons/fa";
@@ -24,7 +20,7 @@ export default function AdminAiCopilot() {
         {
             id: 1,
             sender: "bot",
-            text: "👋 হ্যালো অ্যাডমিন! আমি আপনার **AI Operations Assistant**।\n\nআপনি আমাকে দিয়ে সরাসরি **সেল রিপোর্ট চেক**, **প্রোডাক্ট যোগ**, **ল্যান্ডিং পেজ তৈরি**, কিংবা **মেটা পিক্সেল ও বিজনেস সেটিংস** পরিবর্তন করাতে পারেন।",
+            text: "👋 হ্যালো অ্যাডমিন! আমি আপনার **AI Operations Assistant**।\n\nআপনি আমাকে দিয়ে সরাসরি **সেল রিপোর্ট চেক**, **প্রোডাক্ট যোগ**, **ল্যান্ডিং পেজ তৈরি**, কিংবা **মেটা পিক্সেল ও সেটিংস** নিয়ন্ত্রণ করতে পারেন।",
             quick_replies: [
                 "📊 আজকের সেল রিপোর্ট",
                 "📦 নতুন প্রোডাক্ট যোগ",
@@ -40,6 +36,7 @@ export default function AdminAiCopilot() {
     const [showKeyModal, setShowKeyModal] = useState(false);
     const [apiKeyInput, setApiKeyInput] = useState("");
     const [savingKey, setSavingKey] = useState(false);
+    const [hasUnread, setHasUnread] = useState(false);
 
     const messagesEndRef = useRef(null);
 
@@ -48,8 +45,17 @@ export default function AdminAiCopilot() {
     };
 
     useEffect(() => {
+        const handleOpenTrigger = () => {
+            setIsOpen(true);
+        };
+        window.addEventListener("open-admin-ai-copilot", handleOpenTrigger);
+        return () => window.removeEventListener("open-admin-ai-copilot", handleOpenTrigger);
+    }, []);
+
+    useEffect(() => {
         if (isOpen) {
             scrollToBottom();
+            setHasUnread(false);
             fetchStatus();
         }
     }, [isOpen, messages]);
@@ -69,7 +75,7 @@ export default function AdminAiCopilot() {
             const res = await axios.post("/admin/ai-assistant/save-key", {
                 api_key: apiKeyInput,
             });
-            toast.success(res.data.message || "API Key saved!");
+            toast.success(res.data.message || "API Key saved successfully!");
             setShowKeyModal(false);
             setApiKeyInput("");
             fetchStatus();
@@ -136,47 +142,51 @@ export default function AdminAiCopilot() {
     };
 
     return (
-        <>
-            {/* Top Bar Trigger Button */}
-            <button
-                type="button"
-                onClick={() => setIsOpen(true)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold shadow-sm hover:shadow-indigo-500/20 active:scale-95 transition-all duration-200"
-                title="AI Operations Assistant"
-            >
-                <Sparkles size={15} className="animate-pulse text-amber-300" />
-                <span className="hidden sm:inline">AI Assistant</span>
-                <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full font-medium">Free</span>
-            </button>
+        <aside aria-label="Admin AI Copilot" className="fixed bottom-5 right-5 z-[99999] font-poppins text-slate-800 dark:text-slate-100">
+            {/* 1. FLOATING CHAT BUTTON */}
+            {!isOpen && (
+                <div className="relative group">
+                    <button
+                        type="button"
+                        onClick={() => setIsOpen(true)}
+                        className="w-14 h-14 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white shadow-xl hover:shadow-indigo-500/30 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center relative focus:outline-none focus:ring-4 focus:ring-indigo-300"
+                        title="Open Admin AI Copilot"
+                    >
+                        <Sparkles className="w-6 h-6 animate-pulse text-amber-300" />
+                        {hasUnread && (
+                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white rounded-full flex items-center justify-center">
+                                <span className="w-2 h-2 bg-white rounded-full animate-ping" />
+                            </span>
+                        )}
+                    </button>
 
-            {/* Slide-over Drawer Backdrop */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-[99990] transition-opacity animate-in fade-in"
-                    onClick={() => setIsOpen(false)}
-                />
+                    {/* Tooltip badge */}
+                    <div className="absolute right-16 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1.5 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        <span>Admin AI Copilot ⚡</span>
+                    </div>
+                </div>
             )}
 
-            {/* Slide-over Drawer Window */}
+            {/* 2. CHATBOT WINDOW (Self-contained, identical to Customer Chatbot) */}
             {isOpen && (
-                <div className="fixed inset-y-0 right-0 z-[99999] w-full sm:w-[450px] bg-white dark:bg-slate-900 shadow-2xl flex flex-col font-poppins border-l border-slate-200 dark:border-slate-800 animate-in slide-in-from-right duration-300">
+                <div className="w-[92vw] sm:w-[410px] h-[550px] max-h-[85vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                     {/* Header */}
-                    <div className="p-4 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/80 flex items-center justify-between">
+                    <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white p-3.5 flex items-center justify-between shadow-md">
                         <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-md">
-                                <FaRobot className="w-5 h-5" />
+                            <div className="relative">
+                                <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 text-white font-bold">
+                                    <FaRobot className="w-5 h-5" />
+                                </div>
+                                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 border-2 border-indigo-700 rounded-full" />
                             </div>
                             <div>
-                                <div className="flex items-center gap-1.5">
-                                    <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100">
-                                        Admin AI Copilot
-                                    </h3>
-                                    <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full border border-emerald-500/20">
-                                        Active
-                                    </span>
-                                </div>
-                                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                                    Automate Products, Pages, Analytics & Settings
+                                <h4 className="font-bold text-sm tracking-wide leading-tight flex items-center gap-1.5">
+                                    Admin AI Copilot
+                                    <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded font-normal">Free</span>
+                                </h4>
+                                <p className="text-[11px] text-indigo-100 flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+                                    অপারেশন ও অটোমেশন
                                 </p>
                             </div>
                         </div>
@@ -185,47 +195,37 @@ export default function AdminAiCopilot() {
                             <button
                                 type="button"
                                 onClick={() => setShowKeyModal(true)}
-                                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors ${
+                                className={`px-2 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-colors ${
                                     statusInfo.has_api_key
-                                        ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40"
-                                        : "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40"
+                                        ? "text-emerald-200 bg-emerald-900/40 hover:bg-emerald-900/60"
+                                        : "text-amber-200 bg-amber-900/40 hover:bg-amber-900/60"
                                 }`}
-                                title="Configure Free Gemini API Key"
+                                title="Configure Free Gemini Key"
                             >
-                                <FiKey size={14} />
-                                <span className="hidden sm:inline">
-                                    {statusInfo.has_api_key ? "API Active" : "Add Free Key"}
-                                </span>
+                                <FiKey size={12} />
+                                <span>{statusInfo.has_api_key ? "API Active" : "Add Key"}</span>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg transition-colors"
+                                className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                                title="Minimize"
+                            >
+                                <FiMinimize2 size={16} />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsOpen(false)}
+                                className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                                title="Close"
                             >
                                 <FiX size={18} />
                             </button>
                         </div>
                     </div>
 
-                    {/* API Key Banner if not set */}
-                    {!statusInfo.has_api_key && (
-                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-b border-amber-200 dark:border-amber-900/40 p-3 px-4 flex items-center justify-between text-xs text-amber-800 dark:text-amber-300">
-                            <div className="flex items-center gap-2">
-                                <FiAlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                                <span>১০০% ফ্রি গুগল AI চালু করতে ১ ক্লিকে ফ্রি Key যোগ করুন।</span>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setShowKeyModal(true)}
-                                className="font-bold text-amber-700 dark:text-amber-400 underline underline-offset-2 ml-2 hover:text-amber-900"
-                            >
-                                সেটিংস
-                            </button>
-                        </div>
-                    )}
-
                     {/* Messages Scroll Area */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50 dark:bg-slate-900/50 text-xs sm:text-sm">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/70 dark:bg-slate-950/70 text-xs sm:text-sm">
                         {messages.map((msg) => (
                             <div
                                 key={msg.id}
@@ -234,23 +234,23 @@ export default function AdminAiCopilot() {
                                 }`}
                             >
                                 <div
-                                    className={`max-w-[88%] rounded-2xl p-3.5 shadow-xs ${
+                                    className={`max-w-[86%] rounded-2xl p-3 shadow-xs ${
                                         msg.sender === "user"
                                             ? "bg-indigo-600 text-white rounded-br-none"
-                                            : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200/70 dark:border-slate-700/60 rounded-bl-none"
+                                            : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200/80 dark:border-slate-700/80 rounded-bl-none"
                                     }`}
                                 >
+                                    {/* Text Body */}
                                     <div className="whitespace-pre-line leading-relaxed">
                                         {msg.text}
                                     </div>
 
-                                    {/* Action link card (e.g. view product or open landing page builder) */}
+                                    {/* Action link card */}
                                     {msg.action && (
-                                        <div className="mt-3 pt-2 border-t border-slate-200/70 dark:border-slate-700">
+                                        <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
                                             <Link
                                                 href={msg.action.url}
-                                                onClick={() => setIsOpen(false)}
-                                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg text-xs shadow-xs transition-all"
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg text-xs shadow-xs transition-all"
                                             >
                                                 <span>{msg.action.label}</span>
                                                 <FiExternalLink size={12} />
@@ -270,7 +270,7 @@ export default function AdminAiCopilot() {
                                                 key={idx}
                                                 type="button"
                                                 onClick={() => handleSend(chip)}
-                                                className="text-[11px] bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-full shadow-2xs transition-all active:scale-95"
+                                                className="text-[11px] bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-slate-700 px-2.5 py-1 rounded-full shadow-2xs transition-all active:scale-95"
                                             >
                                                 {chip}
                                             </button>
@@ -280,12 +280,13 @@ export default function AdminAiCopilot() {
                             </div>
                         ))}
 
+                        {/* Loading indicator */}
                         {loading && (
                             <div className="flex items-center gap-2 text-slate-500 text-xs">
                                 <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-indigo-600">
                                     <FaRobot size={12} />
                                 </div>
-                                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-3.5 py-2 flex items-center gap-1 shadow-xs">
+                                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-3 py-2 flex items-center gap-1 shadow-xs">
                                     <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
                                     <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
                                     <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" />
@@ -296,7 +297,7 @@ export default function AdminAiCopilot() {
                     </div>
 
                     {/* Footer Input */}
-                    <div className="p-3 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                    <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2">
                         <input
                             type="text"
                             value={input}
@@ -307,8 +308,8 @@ export default function AdminAiCopilot() {
                                     handleSend();
                                 }
                             }}
-                            placeholder="কমান্ড লিখুন (e.g. আজকের সেল রিপোর্ট বা প্রোডাক্ট যোগ করো)..."
-                            className="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-white"
+                            placeholder="কমান্ড লিখুন (e.g. আজকের সেল রিপোর্ট)..."
+                            className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-white transition-all"
                             disabled={loading}
                         />
                         <button
@@ -324,93 +325,93 @@ export default function AdminAiCopilot() {
                 </div>
             )}
 
-            {/* Modal: Free Gemini API Key Settings */}
+            {/* Modal: Gemini Free API Key Settings */}
             {showKeyModal && (
-                <div className="fixed inset-0 z-[999999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 font-poppins">
-                        <div className="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="fixed inset-0 z-[100000] flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in">
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 font-poppins">
+                        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700">
                             <div className="flex items-center gap-2">
-                                <div className="p-2 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
-                                    <FiKey size={18} />
+                                <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+                                    <FiKey size={16} />
                                 </div>
-                                <h3 className="font-bold text-base text-slate-800 dark:text-slate-100">
-                                    Google Gemini AI (100% Free)
+                                <h3 className="font-bold text-sm text-slate-800 dark:text-white">
+                                    Google Gemini AI Key (100% Free)
                                 </h3>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setShowKeyModal(false)}
-                                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg"
+                                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                             >
                                 <FiX size={18} />
                             </button>
                         </div>
 
-                        <div className="space-y-3.5 text-xs text-slate-600 dark:text-slate-400 mb-5">
+                        <div className="py-4 space-y-3 text-xs text-slate-600 dark:text-slate-300">
                             <p>
-                                গুগল সম্পূর্ণ ফ্রিতে প্রতিদিন <strong>১,৫০০টি রিকোয়েস্ট</strong> ব্যবহারের সুবিধা দেয়। কোনো ক্রেডিট কার্ড বা টাকা লাগে না।
+                                গুগল জেমিনি ১.৫ ফ্ল্যাশ সম্পূর্ণ <strong>ফ্রি (Free of cost)</strong>। কোনো ক্রেডিট কার্ড লাগে না।
                             </p>
-                            <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] space-y-1">
-                                <p className="font-semibold text-slate-700 dark:text-slate-300">
+                            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl border border-indigo-100 dark:border-indigo-900/50">
+                                <p className="font-semibold text-indigo-900 dark:text-indigo-300 mb-1">
                                     কীভাবে ফ্রি Key পাবেন:
                                 </p>
-                                <ol className="list-decimal list-inside space-y-1 text-slate-500 dark:text-slate-400">
+                                <ol className="list-decimal list-inside space-y-1 text-slate-600 dark:text-slate-300">
                                     <li>
                                         <a
                                             href="https://aistudio.google.com/app/apikey"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-blue-600 dark:text-blue-400 underline font-semibold"
+                                            className="text-indigo-600 dark:text-indigo-400 underline font-medium"
                                         >
                                             aistudio.google.com/app/apikey
                                         </a>{" "}
                                         -এ যান।
                                     </li>
-                                    <li>"Create API Key" বাটনে ক্লিক করে Key কপি করুন।</li>
-                                    <li>নিচের বক্সে পেস্ট করে সেভ করুন।</li>
+                                    <li>আপনার জিমেইল দিয়ে সাইন ইন করুন।</li>
+                                    <li>"Create API Key" বাটনে ক্লিক করে Key কপি করে নিন।</li>
                                 </ol>
                             </div>
 
-                            {statusInfo.masked_key && (
-                                <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                                    <FiCheck /> বর্তমান সেভ করা Key: <code>{statusInfo.masked_key}</code>
+                            {statusInfo.has_api_key && (
+                                <p className="text-emerald-600 dark:text-emerald-400 font-medium">
+                                    বর্তমান Key: <code className="bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded">{statusInfo.masked_key}</code>
                                 </p>
                             )}
 
                             <div>
-                                <label className="block mb-1.5 font-semibold text-slate-700 dark:text-slate-300">
-                                    Gemini API Key:
+                                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
+                                    Gemini API Key পেস্ট করুন:
                                 </label>
                                 <input
-                                    type="text"
+                                    type="password"
                                     value={apiKeyInput}
                                     onChange={(e) => setApiKeyInput(e.target.value)}
                                     placeholder="AIzaSy..."
-                                    className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs dark:text-white focus:outline-none focus:border-indigo-500 font-mono"
+                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-indigo-500 font-mono"
                                 />
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-end gap-2.5">
+                        <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
                             <button
                                 type="button"
                                 onClick={() => setShowKeyModal(false)}
-                                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-200 transition-colors"
+                                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 dark:text-slate-300"
                             >
-                                বাতিল
+                                বন্ধ করুন
                             </button>
                             <button
                                 type="button"
                                 onClick={handleSaveKey}
-                                disabled={savingKey}
-                                className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition-colors shadow-xs flex items-center gap-1.5"
+                                disabled={savingKey || !apiKeyInput.trim()}
+                                className="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl shadow-xs transition-colors"
                             >
-                                {savingKey ? "সেভ হচ্ছে..." : "Save Key"}
+                                {savingKey ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-        </>
+        </aside>
     );
 }

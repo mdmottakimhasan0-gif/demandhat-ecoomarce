@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Link, usePage } from "@inertiajs/react";
-import AdminAiCopilot from "./AdminAiCopilot";
+import { Sparkles } from "lucide-react";
 
 function Header() {
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -37,8 +37,17 @@ function Header() {
                             Logged in as <span className="text-slate-800 dark:text-slate-200 capitalize font-semibold">{user.role}</span>
                         </span>
 
-                        {/* AI Assistant Copilot */}
-                        <AdminAiCopilot />
+                        {/* AI Assistant Copilot Trigger */}
+                        <button
+                            type="button"
+                            onClick={() => window.dispatchEvent(new CustomEvent("open-admin-ai-copilot"))}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold shadow-sm hover:shadow-indigo-500/20 active:scale-95 transition-all duration-200"
+                            title="Open AI Operations Assistant"
+                        >
+                            <Sparkles size={15} className="animate-pulse text-amber-300" />
+                            <span className="hidden sm:inline">AI Assistant</span>
+                            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full font-medium">Free</span>
+                        </button>
 
                         {/* Profile Icon */}
                         <div

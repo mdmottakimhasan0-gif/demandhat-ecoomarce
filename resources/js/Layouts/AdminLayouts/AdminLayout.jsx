@@ -1,6 +1,7 @@
 import React, { use, useEffect, useState } from "react";
 import Sidebar from "../../Components/AdminComponents/Sidebar";
 import Header from "../../Components/AdminComponents/Header";
+import AdminAiCopilot from "../../Components/AdminComponents/AdminAiCopilot";
 import { Toaster } from "react-hot-toast";
 
 function AdminLayout({ children }) {
@@ -58,6 +59,9 @@ function AdminLayout({ children }) {
                         <Toaster position="top-center" reverseOrder={false} />
                         {children}
                     </main>
+
+                    {/* Admin AI Copilot (Floating Widget) */}
+                    <AdminAiCopilot />
                 </div>
             </div>
         </div>
