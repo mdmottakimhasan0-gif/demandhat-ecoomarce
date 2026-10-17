@@ -539,7 +539,7 @@ class AiChatbotService
         $clean = preg_replace('/^(?:একটি|একটা)?\s*(?:নতুন\s+)?(?:প্রোডাক্ট|পণ্য|product)?\s*(?:যোগ\s+করো|অ্যাড\s+করো|বানাও|add)?/iu', '', $raw);
         $clean = preg_replace('/(?:দাম|price|স্টক|stock|tk|টাকা|কালার|সাইজ).*/iu', '', $clean);
         $clean = str_replace(['যোগ করো', 'অ্যাড করো', 'add', 'create'], '', $clean);
-        $name = trim(trim($clean), ",.। -\t\n\r\0\x0B") ?: 'New Product';
+        $name = trim(preg_replace('/^[\s,\.।\-]+|[\s,\.।\-]+$/u', '', $clean)) ?: 'New Product';
 
         // Default category
         $category = Category::first();
