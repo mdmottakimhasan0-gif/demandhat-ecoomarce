@@ -369,20 +369,44 @@ class AiChatbotService
      */
     protected function searchProducts(string $keyword)
     {
-        $words = array_filter(explode(' ', $keyword), fn ($w) => mb_strlen($w) >= 2);
-        if (empty($words)) {
+        $clean = mb_strtolower(trim($keyword));
+
+        // Stopwords to ignore
+        $stopWords = [
+            'সেরা', 'প্রোডাক্টগুলো', 'প্রোডাক্ট', 'পণ্য', 'দেখাও', 'চাই', 'আছে', 'কি', 'গুলো', 'দেখান',
+            'আমাকে', 'একটি', 'কিছু', 'দাম', 'কত', 'show', 'products', 'product', 'best', 'the', 'and', 'for', 'item', 'items'
+        ];
+
+        $rawWords = preg_split('/[\s,\.\?!]+/u', $clean, -1, PREG_SPLIT_NO_EMPTY);
+        $searchTerms = array_values(array_filter($rawWords, function ($w) use ($stopWords) {
+            return mb_strlen($w) >= 2 && !in_array($w, $stopWords);
+        }));
+
+        // If no specific keyword left, but user asked for products/best items, return top latest products
+        if (empty($searchTerms)) {
+            $isProductIntent = str_contains($clean, 'প্রোডাক্ট') || str_contains($clean, 'পণ্য') || str_contains($clean, 'সেরা') || str_contains($clean, 'কালেকশন') || str_contains($clean, 'product') || str_contains($clean, 'show') || str_contains($clean, 'দেখাও');
+            if ($isProductIntent) {
+                return Product::where('stock', '>', 0)->latest()->take(4)->get();
+            }
             return collect();
         }
 
         $query = Product::query();
-        $query->where(function ($q) use ($words) {
-            foreach ($words as $w) {
-                $q->orWhere('name', 'like', "%{$w}%")
-                  ->orWhere('description', 'like', "%{$w}%");
+        $query->where(function ($q) use ($searchTerms) {
+            foreach ($searchTerms as $term) {
+                $q->orWhere('name', 'like', "%{$term}%")
+                  ->orWhere('description', 'like', "%{$term}%");
             }
         });
 
-        return $query->where('stock', '>', 0)->latest()->take(4)->get();
+        $results = $query->where('stock', '>', 0)->latest()->take(4)->get();
+
+        // If specific search had no results, fallback to latest products if product intent was present
+        if ($results->isEmpty() && (str_contains($clean, 'প্রোডাক্ট') || str_contains($clean, 'আছে') || str_contains($clean, 'চাই'))) {
+            return Product::where('stock', '>', 0)->latest()->take(4)->get();
+        }
+
+        return $results;
     }
 
     /**
