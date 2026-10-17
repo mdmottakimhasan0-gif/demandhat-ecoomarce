@@ -20,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'api/chatbot/*',
+        ]);
+
         $middleware->alias([
             'role' => ValidUser::class,
         ]);
