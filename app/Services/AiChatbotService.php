@@ -46,10 +46,10 @@ class AiChatbotService
         }
 
         try {
-            $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}";
+            $models = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-1.5-flash'];
 
             $contents = [];
-            
+
             // Append recent history if provided
             foreach ($history as $h) {
                 if (!empty($h['role']) && !empty($h['text'])) {
@@ -80,18 +80,22 @@ class AiChatbotService
                 ];
             }
 
-            $response = Http::timeout(15)
-                ->withHeaders(['Content-Type' => 'application/json'])
-                ->post($url, $payload);
+            foreach ($models as $model) {
+                $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
+                $response = Http::timeout(15)
+                    ->withHeaders(['Content-Type' => 'application/json'])
+                    ->post($url, $payload);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $reply = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-                return $reply ? trim($reply) : null;
-            } else {
-                Log::warning('Gemini API call returned non-200: ' . $response->body());
-                return null;
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $reply = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                    if ($reply) {
+                        return trim($reply);
+                    }
+                }
             }
+
+            return null;
         } catch (\Throwable $e) {
             Log::error('Gemini API exception: ' . $e->getMessage());
             return null;
