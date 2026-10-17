@@ -29,14 +29,14 @@ function ProductForm({ categories = [] }) {
 
     // Common color & size quick presets
     const PRESET_COLORS = [
-        "কালো (Black)",
-        "সাদা (White)",
-        "লাল (Red)",
-        "নীল (Blue)",
-        "সবুজ (Green)",
-        "হলুদ (Yellow)",
-        "গোলাপি (Pink)",
-        "ছাই (Ash)",
+        "Black",
+        "White",
+        "Red",
+        "Blue",
+        "Green",
+        "Yellow",
+        "Pink",
+        "Ash",
     ];
 
     const PRESET_SIZES = ["S", "M", "L", "XL", "XXL", "3XL", "Free Size"];
@@ -196,7 +196,7 @@ function ProductForm({ categories = [] }) {
                 <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 animate-in fade-in">
                     <div className="flex items-center gap-2 font-bold mb-2">
                         <FiAlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                        <span>ফর্মে কিছু ভুল বা তথ্য বাদ পড়েছে (Please fix the following issues):</span>
+                        <span>Please fix the following issues:</span>
                     </div>
                     <ul className="list-disc list-inside text-xs sm:text-sm space-y-1 ml-2">
                         {Object.entries(errors).map(([key, msg]) => (
@@ -304,10 +304,10 @@ function ProductForm({ categories = [] }) {
                                 } rounded-lg text-sm dark:text-white transition-all`}
                             >
                                 <option value="normal">
-                                    সাধারণ ডেলিভারি চার্জ (Standard Rate)
+                                    Standard Delivery Rate
                                 </option>
                                 <option value="free">
-                                    🎉 Free Delivery / ফ্রি ডেলিভারি (৳0)
+                                    🎉 Free Delivery (TK 0)
                                 </option>
                             </select>
                             {errors.bussiness_class && (
@@ -431,29 +431,21 @@ function ProductForm({ categories = [] }) {
 
                 {/* 2. PRODUCT VARIATIONS (COLOR & SIZE) - OPTIONAL */}
                 <div className="bg-white font-poppins dark:bg-slate-950 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
-                    <div className="mb-4">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                                Product Variations (কালার ও সাইজ ভেরিয়েশন)
-                            </h3>
-                            <span className="text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-semibold px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
-                                ঐচ্ছিক / Optional
-                            </span>
-                        </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            যদি পণ্যটির কালার বা সাইজ পছন্দ করার অপশন থাকে, তবে নিচে যোগ করুন। ভেরিয়েশন না থাকলে খালি রাখুন।
-                        </p>
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                            Product Variations
+                        </h3>
+                        <span className="text-xs bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-semibold px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+                            Optional
+                        </span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
                         {/* COLOR VARIATION */}
                         <div className="bg-gray-50 dark:bg-slate-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-800">
-                            <label className="block mb-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200">
-                                🎨 Color Variations (কালার অপশন)
+                            <label className="block mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200">
+                                🎨 Color Variations
                             </label>
-                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mb-3">
-                                কালারের নাম লিখে Enter চাপুন বা দ্রুত প্রিসেট ক্লিক করুন:
-                            </p>
 
                             <div className="flex gap-2 mb-3">
                                 <input
@@ -466,7 +458,7 @@ function ProductForm({ categories = [] }) {
                                             handleAddColor();
                                         }
                                     }}
-                                    placeholder="e.g. Red, Blue, কালো..."
+                                    placeholder="e.g. Red, Blue, Black..."
                                     className="flex-1 p-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-gray-700 rounded-lg text-sm dark:text-white"
                                 />
                                 <button
@@ -514,19 +506,16 @@ function ProductForm({ categories = [] }) {
                                 </div>
                             ) : (
                                 <p className="text-[11px] text-gray-400 italic pt-1">
-                                    কোনো কালার যোগ করা হয়নি (No colors added)
+                                    No colors added
                                 </p>
                             )}
                         </div>
 
                         {/* SIZE VARIATION */}
                         <div className="bg-gray-50 dark:bg-slate-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-800">
-                            <label className="block mb-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200">
-                                📏 Size Variations (সাইজ অপশন)
+                            <label className="block mb-2 text-sm font-semibold text-gray-800 dark:text-gray-200">
+                                📏 Size Variations
                             </label>
-                            <p className="text-[11px] text-gray-500 dark:text-gray-400 mb-3">
-                                সাইজ লিখে Enter চাপুন বা প্রিসেট ক্লিক করুন:
-                            </p>
 
                             <div className="flex gap-2 mb-3">
                                 <input
@@ -586,7 +575,7 @@ function ProductForm({ categories = [] }) {
                                 </div>
                             ) : (
                                 <p className="text-[11px] text-gray-400 italic pt-1">
-                                    কোনো সাইজ যোগ করা হয়নি (No sizes added)
+                                    No sizes added
                                 </p>
                             )}
                         </div>
@@ -596,14 +585,14 @@ function ProductForm({ categories = [] }) {
                 {/* 3. IMAGES SECTION */}
                 <div className="bg-white dark:bg-slate-950 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
                     <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
-                        Product Media (ছবিসমূহ)
+                        Product Media
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Main Thumbnail */}
                         <div className={errors.image ? "field-has-error" : ""}>
                             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Main Thumbnail (প্রধান ছবি)
+                                Main Thumbnail <span className="text-red-500">*</span>
                             </label>
                             <div
                                 className={`relative group border-2 border-dashed ${
@@ -634,7 +623,7 @@ function ProductForm({ categories = [] }) {
                                     <>
                                         <FiUploadCloud className="w-10 h-10 text-gray-400 mb-2" />
                                         <p className="text-xs text-gray-500 mb-1">
-                                            ছবি আপলোড করতে ক্লিক করুন (Max: 5MB)
+                                            Click to upload image (Max: 5MB)
                                         </p>
                                         <input
                                             type="file"
@@ -655,12 +644,12 @@ function ProductForm({ categories = [] }) {
                         {/* Gallery Images */}
                         <div className={errors.gallery ? "field-has-error" : ""}>
                             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                Gallery Images (অতিরিক্ত ছবি)
+                                Gallery Images
                             </label>
                             <div className="relative border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 bg-gray-50 dark:bg-slate-900 flex flex-col items-center justify-center min-h-[200px] transition-all">
                                 <FiPlus className="w-10 h-10 text-gray-400 mb-2" />
                                 <p className="text-xs text-gray-500 mb-1">
-                                    একাধিক ছবি যোগ করতে পারেন (Max: 5MB each)
+                                    Upload multiple images (Max: 5MB each)
                                 </p>
                                 <input
                                     type="file"
@@ -710,12 +699,9 @@ function ProductForm({ categories = [] }) {
 
                 {/* 4. FULL PRODUCT DETAILS */}
                 <div className={`bg-white dark:bg-slate-950 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm ${errors.productDetails ? "field-has-error" : ""}`}>
-                    <label className="block mb-2 text-sm font-semibold text-gray-900 dark:text-gray-200">
-                        Full Product Details (পণ্যের বিস্তারিত বিবরণ) <span className="text-red-500">*</span>
+                    <label className="block mb-3 text-sm font-semibold text-gray-900 dark:text-gray-200">
+                        Full Product Details <span className="text-red-500">*</span>
                     </label>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                        পণ্যের সকল বিস্তারিত বিবরণ, বৈশিষ্ট্য এবং সুবিধা এখানে লিখুন।
-                    </p>
                     <div className={errors.productDetails ? "border-2 border-red-500 rounded-xl overflow-hidden" : ""}>
                         <TiptapEditor
                             value={data.productDetails}
