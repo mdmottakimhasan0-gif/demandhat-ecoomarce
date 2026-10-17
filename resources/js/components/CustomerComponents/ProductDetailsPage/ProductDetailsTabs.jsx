@@ -35,15 +35,9 @@ const ProductDetailsTabs = ({ activeTab, setActiveTab, product }) => {
             show: true,
         },
         {
-            id: "specification",
-            label: "স্পেসিফিকেশন",
-            content: product.specification,
-            show: product.specification && product.specification !== "<p></p>",
-        },
-        {
             id: "reviews",
             label: `রিভিউ (${reviews.length})`,
-            content: null, // Rendered uniquely below
+            content: null,
             show: true,
         },
     ];

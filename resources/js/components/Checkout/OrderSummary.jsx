@@ -33,6 +33,21 @@ export default function OrderSummary({
                                     {item.name}
                                 </h4>
 
+                                {(item.color || item.size) && (
+                                    <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                        {item.color && (
+                                            <span className="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium border border-blue-200">
+                                                কালার: {item.color}
+                                            </span>
+                                        )}
+                                        {item.size && (
+                                            <span className="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-medium border border-emerald-200">
+                                                সাইজ: {item.size}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+
                                 {item.bussiness_class === "free" && (
                                     <span className="inline-block mt-0.5 text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded font-bold">
                                         🎉 ফ্রি ডেলিভারি অফার

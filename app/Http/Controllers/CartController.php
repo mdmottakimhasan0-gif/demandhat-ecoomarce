@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class CartController extends Controller
@@ -13,33 +14,45 @@ class CartController extends Controller
         $cartItems = [];
         $subtotal = 0;
 
-        // Use ONLY Session Logic now
         $sessionCart = session()->get('cart', []);
 
         if (!empty($sessionCart)) {
-            $products = Product::whereIn('id', array_keys($sessionCart))->get();
-            if ($products->count() !== count($sessionCart)) {
-                $validIds = $products->pluck('id')->toArray();
-                $sessionCart = array_intersect_key($sessionCart, array_flip($validIds));
-                session()->put('cart', $sessionCart);
+            $productIds = [];
+            foreach ($sessionCart as $key => $item) {
+                $productIds[] = is_array($item) ? $item['product_id'] : $key;
             }
+            $productIds = array_unique(array_filter($productIds));
 
-            foreach ($products as $product) {
-                $qty = $sessionCart[$product->id];
+            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
+            foreach ($sessionCart as $cartKey => $item) {
+                $pId = is_array($item) ? $item['product_id'] : $cartKey;
+                $qty = is_array($item) ? ($item['quantity'] ?? 1) : $item;
+                $color = is_array($item) ? ($item['color'] ?? null) : null;
+                $size = is_array($item) ? ($item['size'] ?? null) : null;
+
+                if (!$products->has($pId)) {
+                    continue;
+                }
+
+                $product = $products->get($pId);
                 $originalPrice = (float) $product->price;
                 $discountPercent = $product->discount ? (float) $product->discount : 0;
                 $discountedPrice = round($originalPrice - ($originalPrice * ($discountPercent / 100)));
 
                 $cartItems[] = [
-                    'id' => $product->id,
+                    'id' => (string) $cartKey,
+                    'product_id' => $product->id,
                     'name' => $product->name,
+                    'color' => $color,
+                    'size' => $size,
                     'image' => '/storage/' . $product->image,
                     'price' => $discountedPrice,
                     'original_price' => $originalPrice,
                     'discount_percent' => $discountPercent,
                     'quantity' => $qty,
-                    'description' => $product->short_description ?? '',
+                    'bussiness_class' => $product->bussiness_class,
+                    'stock' => $product->stock,
                 ];
 
                 $subtotal += $discountedPrice * $qty;
@@ -61,30 +74,56 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
-        // 🛡️ SECURITY ADDED: Validate the request before doing anything!
         $request->validate([
-            'product_id' => 'required|exists:products,id', // Make sure the product actually exists in the DB
-            'quantity' => 'required|integer|min:1|max:50'  // Must be a number, no negatives, and limit to 50 items so they can't crash your server
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1|max:50',
+            'color' => 'nullable|string|max:100',
+            'size' => 'nullable|string|max:100',
         ]);
 
-        $productId = $request->input('product_id');
-        $quantity = $request->input('quantity', 1);
+        $productId = (int) $request->input('product_id');
+        $quantity = (int) $request->input('quantity', 1);
+        $color = $request->input('color') ? trim($request->input('color')) : null;
+        $size = $request->input('size') ? trim($request->input('size')) : null;
+
+        // Form unique key for product + variation combination
+        $cartKey = (string) $productId;
+        if ($color || $size) {
+            $cartKey .= '-' . Str::slug($color ?? 'none') . '-' . Str::slug($size ?? 'none');
+        }
 
         $cart = session()->get('cart', []);
-        $cart[$productId] = isset($cart[$productId]) ? $cart[$productId] + $quantity : $quantity;
+
+        if (isset($cart[$cartKey])) {
+            if (is_array($cart[$cartKey])) {
+                $cart[$cartKey]['quantity'] = min(50, ($cart[$cartKey]['quantity'] ?? 1) + $quantity);
+            } else {
+                $cart[$cartKey] = min(50, $cart[$cartKey] + $quantity);
+            }
+        } else {
+            $cart[$cartKey] = [
+                'product_id' => $productId,
+                'quantity' => $quantity,
+                'color' => $color,
+                'size' => $size,
+            ];
+        }
 
         session()->put('cart', $cart);
         $this->syncCartToDatabase();
         return redirect()->back()->with('success', 'Product added to cart!');
     }
 
-
-
     public function update(Request $request, $id)
     {
         $cart = session()->get('cart', []);
         if (isset($cart[$id])) {
-            $cart[$id] = max(1, $request->input('quantity'));
+            $newQty = max(1, min(50, (int) $request->input('quantity')));
+            if (is_array($cart[$id])) {
+                $cart[$id]['quantity'] = $newQty;
+            } else {
+                $cart[$id] = $newQty;
+            }
             session()->put('cart', $cart);
         }
         $this->syncCartToDatabase();
@@ -110,11 +149,13 @@ class CartController extends Controller
 
             \App\Models\Cart::where('user_id', $userId)->delete();
 
-            foreach ($cart as $productId => $quantity) {
+            foreach ($cart as $key => $item) {
+                $pId = is_array($item) ? $item['product_id'] : $key;
+                $qty = is_array($item) ? $item['quantity'] : $item;
                 \App\Models\Cart::create([
                     'user_id' => $userId,
-                    'product_id' => $productId,
-                    'quantity' => $quantity
+                    'product_id' => $pId,
+                    'quantity' => $qty
                 ]);
             }
         }

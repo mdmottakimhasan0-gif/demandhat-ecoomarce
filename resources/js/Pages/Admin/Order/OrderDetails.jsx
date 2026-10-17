@@ -135,10 +135,25 @@ export default function OrderDetails({ order }) {
                                             <h3 className="font-bold text-[15px] text-gray-800 dark:text-gray-200 hover:text-blue-600 transition-colors">
                                                 {item.product_name}
                                             </h3>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center flex-wrap gap-2">
                                                 <span>Price: ৳{parseFloat(item.price).toFixed(2)}</span>
                                                 <span className="text-gray-300 dark:text-slate-700">•</span>
                                                 <span className="font-bold text-gray-700 dark:text-gray-300">Qty: {item.quantity}</span>
+                                                {(item.color || item.size) && (
+                                                    <>
+                                                        <span className="text-gray-300 dark:text-slate-700">•</span>
+                                                        {item.color && (
+                                                            <span className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded text-[11px] font-semibold border border-blue-200 dark:border-blue-900">
+                                                                Color: {item.color}
+                                                            </span>
+                                                        )}
+                                                        {item.size && (
+                                                            <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-[11px] font-semibold border border-emerald-200 dark:border-emerald-900">
+                                                                Size: {item.size}
+                                                            </span>
+                                                        )}
+                                                    </>
+                                                )}
                                             </p>
                                         </div>
                                         <div className="text-left sm:text-right">

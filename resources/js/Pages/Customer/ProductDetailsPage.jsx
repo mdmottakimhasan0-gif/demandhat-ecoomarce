@@ -15,6 +15,30 @@ function ProductDetailsPage({ product = {}, relatedProducts = [], contact }) {
     const [activeTab, setActiveTab] = useState("details");
     const [selectedImage, setSelectedImage] = useState(product.image);
 
+    const parseVariationList = (raw) => {
+        if (!raw) return [];
+        if (Array.isArray(raw)) return raw;
+        try {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            return typeof raw === "string" ? raw.split(",").map((s) => s.trim()).filter(Boolean) : [];
+        }
+    };
+
+    const initialColors = parseVariationList(product.colors || (product.color ? [product.color] : []));
+    const initialSizes = parseVariationList(product.sizes);
+
+    const [selectedColor, setSelectedColor] = useState(initialColors.length > 0 ? initialColors[0] : null);
+    const [selectedSize, setSelectedSize] = useState(initialSizes.length > 0 ? initialSizes[0] : null);
+
+    useEffect(() => {
+        const c = parseVariationList(product.colors || (product.color ? [product.color] : []));
+        const s = parseVariationList(product.sizes);
+        setSelectedColor(c.length > 0 ? c[0] : null);
+        setSelectedSize(s.length > 0 ? s[0] : null);
+    }, [product.id]);
+
     const discountPercentage = product.discount ? Number(product.discount) : 0;
     const originalPrice = Number(product.price);
     const discountedPrice =
@@ -104,7 +128,12 @@ function ProductDetailsPage({ product = {}, relatedProducts = [], contact }) {
         setLoading(true);
         router.post(
             "/cart/add",
-            { product_id: product.id, quantity: 1 },
+            {
+                product_id: product.id,
+                quantity: 1,
+                color: selectedColor,
+                size: selectedSize,
+            },
             {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -136,6 +165,10 @@ function ProductDetailsPage({ product = {}, relatedProducts = [], contact }) {
                             discountedPrice={discountedPrice}
                             originalPrice={originalPrice}
                             discountPercentage={discountPercentage}
+                            selectedColor={selectedColor}
+                            setSelectedColor={setSelectedColor}
+                            selectedSize={selectedSize}
+                            setSelectedSize={setSelectedSize}
                         />
                         <ProductActions
                             product={product}

@@ -65,23 +65,40 @@ class AdminProductController extends Controller
         $validated = $request->validate([
             'productName' => 'required|string|max:255',
             'category' => 'required|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'bussiness_class' => 'required|in:free,normal,medium,high',
+            'productDetails' => 'required|string',
+            'initial_rating' => 'nullable|numeric|min:0|max:5',
+            'discount' => 'nullable|numeric',
+            'colors' => 'nullable|array',
+            'colors.*' => 'string|max:100',
+            'sizes' => 'nullable|array',
+            'sizes.*' => 'string|max:100',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
             'brand' => 'nullable|string|max:100',
             'color' => 'nullable|string|max:50',
             'weight' => 'nullable|numeric',
             'length' => 'nullable|numeric',
             'width' => 'nullable|numeric',
-            'initial_rating' => 'nullable|numeric|min:0|max:5',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'productDetails' => 'required|string',
             'specification' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:500',
             'quick_view' => 'nullable|string',
             'short_description' => 'nullable|string',
-            'bussiness_class' => 'required|in:free,normal,medium,high',
-            'discount' => 'nullable|numeric',
-            'gallery' => 'nullable|array',
-            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:500',
+        ], [
+            'productName.required' => 'পণ্যের নাম দেওয়া আবশ্যক (Product Name is required)',
+            'category.required' => 'ক্যাটাগরি নির্বাচন করুন (Category is required)',
+            'category.exists' => 'নির্বাচিত ক্যাটাগরি পাওয়া যায়নি',
+            'price.required' => 'মূল্য দেওয়া আবশ্যক (Price is required)',
+            'price.numeric' => 'মূল্য একটি সঠিক সংখ্যা হতে হবে',
+            'stock.required' => 'স্টকের সংখ্যা দেওয়া আবশ্যক (Stock quantity is required)',
+            'bussiness_class.required' => 'ডেলিভারি চার্জের ধরণ সিলেক্ট করুন',
+            'productDetails.required' => 'পণ্যের বিস্তারিত বিবরণ দিন (Product Details is required)',
+            'image.image' => 'মূল ছবিটি একটি ইমেজ ফাইল হতে হবে',
+            'image.max' => 'মূল ছবির সাইজ সর্বোচ্চ ৫MB হতে পারবে',
+            'gallery.*.image' => 'গ্যালারির প্রতিটি ফাইল ইমেজ হতে হবে',
+            'gallery.*.max' => 'গ্যালারির প্রতিটি ছবির সাইজ সর্বোচ্চ ৫MB হতে পারবে',
         ]);
 
         return DB::transaction(function () use ($request, $validated) {
@@ -103,25 +120,31 @@ class AdminProductController extends Controller
                 $sku = "{$prefix}-{$year}-{$random}";
             } while (Product::where('sku', $sku)->exists());
 
+            // Clean variation arrays
+            $colors = !empty($validated['colors']) ? array_values(array_filter(array_map('trim', $validated['colors']))) : null;
+            $sizes = !empty($validated['sizes']) ? array_values(array_filter(array_map('trim', $validated['sizes']))) : null;
+
             // 3. Create Product
             $product = Product::create([
                 'name' => $validated['productName'],
                 'slug' => Str::slug($validated['productName']) . '-' . Str::random(4),
                 'category_id' => $validated['category'],
                 'sku' => $sku,
-                'brand' => $validated['brand'],
-                'color' => $validated['color'],
-                'weight' => $validated['weight'],
-                'length' => $validated['length'],
-                'width' => $validated['width'],
+                'brand' => $validated['brand'] ?? null,
+                'color' => $validated['color'] ?? (!empty($colors) ? $colors[0] : null),
+                'colors' => $colors,
+                'sizes' => $sizes,
+                'weight' => $validated['weight'] ?? null,
+                'length' => $validated['length'] ?? null,
+                'width' => $validated['width'] ?? null,
                 'price' => $validated['price'],
                 'initial_rating' => $validated['initial_rating'] ?? 0,
                 'stock' => $validated['stock'],
-                'description' => $validated['productDetails'], // Tiptap HTML
-                'specification' => $validated['specification'],
+                'description' => $validated['productDetails'],
+                'specification' => $validated['specification'] ?? null,
                 'image' => $imagePath,
-                'quick_view' => $validated['quick_view'],       // Tiptap HTML
-                'short_description' => $validated['short_description'],
+                'quick_view' => $validated['quick_view'] ?? null,
+                'short_description' => $validated['short_description'] ?? null,
                 'bussiness_class' => $validated['bussiness_class'],
                 'discount' => $validated['discount'] ?? 0,
             ]);
@@ -161,7 +184,7 @@ class AdminProductController extends Controller
     public function uploadEditorImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:500',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ]);
 
         if ($request->hasFile('image')) {
@@ -182,35 +205,54 @@ class AdminProductController extends Controller
         $validated = $request->validate([
             'productName' => 'required|string|max:255',
             'category' => 'required|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'bussiness_class' => 'required|in:free,normal,medium,high',
+            'productDetails' => 'required|string',
+            'initial_rating' => 'nullable|numeric|min:0|max:5',
+            'discount' => 'nullable|numeric',
+            'colors' => 'nullable|array',
+            'colors.*' => 'string|max:100',
+            'sizes' => 'nullable|array',
+            'sizes.*' => 'string|max:100',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
             'brand' => 'nullable|string|max:100',
             'color' => 'nullable|string|max:50',
             'weight' => 'nullable|numeric',
             'length' => 'nullable|numeric',
-            'initial_rating' => 'nullable|numeric|min:0|max:5',
             'width' => 'nullable|numeric',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'productDetails' => 'required|string', // New Tiptap HTML
             'specification' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:500',
-            'quick_view' => 'nullable|string',     // New Tiptap HTML
+            'quick_view' => 'nullable|string',
             'short_description' => 'nullable|string',
-            'bussiness_class' => 'required|in:free,normal,medium,high',
-            'discount' => 'nullable|numeric',
-            'gallery' => 'nullable|array',
-            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:500',
+        ], [
+            'productName.required' => 'পণ্যের নাম দেওয়া আবশ্যক (Product Name is required)',
+            'category.required' => 'ক্যাটাগরি নির্বাচন করুন (Category is required)',
+            'category.exists' => 'নির্বাচিত ক্যাটাগরি পাওয়া যায়নি',
+            'price.required' => 'মূল্য দেওয়া আবশ্যক (Price is required)',
+            'price.numeric' => 'মূল্য একটি সঠিক সংখ্যা হতে হবে',
+            'stock.required' => 'স্টকের সংখ্যা দেওয়া আবশ্যক (Stock quantity is required)',
+            'bussiness_class.required' => 'ডেলিভারি চার্জের ধরণ সিলেক্ট করুন',
+            'productDetails.required' => 'পণ্যের বিস্তারিত বিবরণ দিন (Product Details is required)',
+            'image.image' => 'মূল ছবিটি একটি ইমেজ ফাইল হতে হবে',
+            'image.max' => 'মূল ছবির সাইজ সর্বোচ্চ ৫MB হতে পারবে',
+            'gallery.*.image' => 'গ্যালারির প্রতিটি ফাইল ইমেজ হতে হবে',
+            'gallery.*.max' => 'গ্যালারির প্রতিটি ছবির সাইজ সর্বোচ্চ ৫MB হতে পারবে',
         ]);
 
-        // --- STEP 1: CLEANUP TIPTAP IMAGES ---
-        // We find images that were in the old text but are NOT in the new text
-        $this->cleanupUnusedEditorImages($product->description, $validated['productDetails']);
-        $this->cleanupUnusedEditorImages($product->quick_view, $validated['quick_view']);
-        $this->cleanupUnusedEditorImages($product->specification, $validated['specification']);
+        // Clean up unused Tiptap images if applicable
+        if (isset($validated['productDetails'])) {
+            $this->cleanupUnusedEditorImages($product->description, $validated['productDetails']);
+        }
+        if (isset($validated['quick_view'])) {
+            $this->cleanupUnusedEditorImages($product->quick_view, $validated['quick_view']);
+        }
+        if (isset($validated['specification'])) {
+            $this->cleanupUnusedEditorImages($product->specification, $validated['specification']);
+        }
 
-        // In destroy()
-        $this->deleteImagesFromHtml($product->specification);
-
-        // --- STEP 2: PRIMARY IMAGE ---
+        // Handle Primary Image
         if ($request->hasFile('image')) {
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
@@ -218,11 +260,8 @@ class AdminProductController extends Controller
             $product->image = $request->file('image')->store('products', 'public');
         }
 
-        // --- STEP 3: GALLERY ---
+        // Handle Gallery Images
         if ($request->hasFile('gallery')) {
-            // If you want to REPLACe the whole gallery, uncomment the line below:
-            // $this->deleteOldGallery($product); 
-
             foreach ($request->file('gallery') as $file) {
                 $path = $file->store('products/gallery', 'public');
                 $product->images()->create(['image_path' => $path]);
@@ -233,23 +272,28 @@ class AdminProductController extends Controller
             $product->slug = Str::slug($validated['productName']) . '-' . Str::random(4);
         }
 
+        $colors = !empty($validated['colors']) ? array_values(array_filter(array_map('trim', $validated['colors']))) : null;
+        $sizes = !empty($validated['sizes']) ? array_values(array_filter(array_map('trim', $validated['sizes']))) : null;
+
         $product->update([
             'name' => $validated['productName'],
             'category_id' => $validated['category'],
-            'brand' => $validated['brand'],
-            'color' => $validated['color'],
-            'weight' => $validated['weight'],
-            'length' => $validated['length'],
-            'width' => $validated['width'],
+            'brand' => $validated['brand'] ?? $product->brand,
+            'color' => $validated['color'] ?? (!empty($colors) ? $colors[0] : $product->color),
+            'colors' => $colors,
+            'sizes' => $sizes,
+            'weight' => $validated['weight'] ?? $product->weight,
+            'length' => $validated['length'] ?? $product->length,
+            'width' => $validated['width'] ?? $product->width,
             'price' => $validated['price'],
             'stock' => $validated['stock'],
             'initial_rating' => $validated['initial_rating'] ?? 0,
             'description' => $validated['productDetails'],
-            'specification' => $validated['specification'],
-            'quick_view' => $validated['quick_view'],
-            'short_description' => $validated['short_description'],
+            'specification' => $validated['specification'] ?? $product->specification,
+            'quick_view' => $validated['quick_view'] ?? $product->quick_view,
+            'short_description' => $validated['short_description'] ?? $product->short_description,
             'bussiness_class' => $validated['bussiness_class'],
-            'discount' => $validated['discount'],
+            'discount' => $validated['discount'] ?? 0,
         ]);
 
         // Bust landing page product and sections cache so the update appears immediately

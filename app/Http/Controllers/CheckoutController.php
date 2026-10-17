@@ -104,7 +104,8 @@ class CheckoutController extends Controller
                         throw new \Exception("অবৈধ পরিমাণ (Invalid quantity).");
                     }
 
-                    $product = Product::lockForUpdate()->find($item['id']);
+                    $productId = $item['product_id'] ?? $item['id'];
+                    $product = Product::lockForUpdate()->find($productId);
 
                     if (!$product || $product->stock < $item['quantity']) {
                         throw new \Exception("পণ্য '{$item['name']}' স্টক আউট হয়ে গেছে।");
@@ -112,12 +113,13 @@ class CheckoutController extends Controller
 
                     OrderItem::create([
                         'order_id' => $order->id,
-                        'product_id' => $item['id'],
+                        'product_id' => $product->id,
                         'product_name' => $item['name'],
+                        'color' => $item['color'] ?? null,
+                        'size' => $item['size'] ?? null,
                         'price' => $item['price'],
                         'quantity' => $item['quantity'],
                     ]);
-
 
                     $product->decrement('stock', $item['quantity']);
                 }
@@ -174,17 +176,35 @@ class CheckoutController extends Controller
         $sessionCart = session()->get('cart', []);
 
         if (!empty($sessionCart)) {
-            $products = Product::whereIn('id', array_keys($sessionCart))->get();
+            $productIds = [];
+            foreach ($sessionCart as $key => $item) {
+                $productIds[] = is_array($item) ? $item['product_id'] : $key;
+            }
+            $productIds = array_unique(array_filter($productIds));
 
-            foreach ($products as $product) {
-                $qty = $sessionCart[$product->id];
+            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
+            foreach ($sessionCart as $cartKey => $item) {
+                $pId = is_array($item) ? $item['product_id'] : $cartKey;
+                $qty = is_array($item) ? ($item['quantity'] ?? 1) : $item;
+                $color = is_array($item) ? ($item['color'] ?? null) : null;
+                $size = is_array($item) ? ($item['size'] ?? null) : null;
+
+                if (!$products->has($pId)) {
+                    continue;
+                }
+
+                $product = $products->get($pId);
                 $originalPrice = (float) $product->price;
                 $discountPercent = $product->discount ? (float) $product->discount : 0;
                 $discountedPrice = round($originalPrice - ($originalPrice * ($discountPercent / 100)));
 
                 $cartItems[] = [
-                    'id' => $product->id,
+                    'id' => (string) $cartKey,
+                    'product_id' => $product->id,
                     'name' => $product->name,
+                    'color' => $color,
+                    'size' => $size,
                     'image' => '/storage/' . $product->image,
                     'price' => $discountedPrice,
                     'quantity' => $qty,

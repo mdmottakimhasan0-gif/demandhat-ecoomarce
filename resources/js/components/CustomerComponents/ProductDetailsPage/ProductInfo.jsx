@@ -1,18 +1,20 @@
 import React from "react";
 import { CheckCircle, XCircle, Star, StarHalf } from "lucide-react";
-import SafeHTML from "../../CustomerComponents/SafeHTML";
 
 const ProductInfo = ({
     product,
     discountedPrice,
     originalPrice,
     discountPercentage,
+    selectedColor,
+    setSelectedColor,
+    selectedSize,
+    setSelectedSize,
 }) => {
     // --- FLOOR RATING LOGIC ---
     const approvedReviews = product.reviews || [];
     const realReviewCount = approvedReviews.length;
 
-    // Calculate the actual average of approved reviews
     const realAverage =
         realReviewCount > 0
             ? approvedReviews.reduce((sum, curr) => sum + curr.rating, 0) /
@@ -23,19 +25,31 @@ const ProductInfo = ({
         ? parseFloat(product.initial_rating)
         : 0;
 
-    // Core Logic: If real average exceeds initial rating, show real. Otherwise, show initial.
     const displayRating = (
         realAverage > initialRating ? realAverage : initialRating
     ).toFixed(1);
 
-    // Review count is ALWAYS the actual count
     const displayReviewCount = realReviewCount;
 
-    // Logic to calculate stars
     const numericRating = parseFloat(displayRating);
     const fullStars = Math.floor(numericRating);
     const hasHalfStar = numericRating - fullStars >= 0.5;
     const emptyStars = Math.max(0, 5 - fullStars - (hasHalfStar ? 1 : 0));
+
+    // Parse colors and sizes safely
+    const parseVariationList = (raw) => {
+        if (!raw) return [];
+        if (Array.isArray(raw)) return raw;
+        try {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            return typeof raw === "string" ? raw.split(",").map((s) => s.trim()).filter(Boolean) : [];
+        }
+    };
+
+    const colors = parseVariationList(product.colors || (product.color ? [product.color] : []));
+    const sizes = parseVariationList(product.sizes);
 
     return (
         <>
@@ -46,20 +60,15 @@ const ProductInfo = ({
             {/* --- RATING SECTION --- */}
             <div className="flex flex-wrap items-center gap-2 mb-4">
                 <div className="flex items-center gap-0.5">
-                    {/* Render Full Stars */}
                     {[...Array(fullStars)].map((_, i) => (
                         <Star
                             key={`full-${i}`}
                             className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400"
                         />
                     ))}
-
-                    {/* Render Half Star if applicable */}
                     {hasHalfStar && (
                         <StarHalf className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
                     )}
-
-                    {/* Render Empty Stars */}
                     {[...Array(emptyStars)].map((_, i) => (
                         <Star
                             key={`empty-${i}`}
@@ -78,13 +87,8 @@ const ProductInfo = ({
                 </div>
             </div>
 
-            {product.short_description && (
-                <p className="font-semibold text-lg font-hindSiliguri tracking-tight text-gray-900 my-2">
-                    {product.short_description}
-                </p>
-            )}
-
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-6">
+            {/* Pricing and Stock Status */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-5">
                 <div className="flex items-baseline gap-3">
                     <p className="text-lg sm:text-xl md:text-2xl font-bold text-[#059669]">
                         TK {Math.round(discountedPrice).toLocaleString()}
@@ -99,7 +103,11 @@ const ProductInfo = ({
                 <span className="hidden sm:block text-gray-300">|</span>
 
                 <span
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold border ${product.stock > 0 ? "bg-[#D1FAE5] border-[#34D399] text-[#047857]" : "bg-red-50 border-red-200 text-red-700"}`}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold border ${
+                        product.stock > 0
+                            ? "bg-[#D1FAE5] border-[#34D399] text-[#047857]"
+                            : "bg-red-50 border-red-200 text-red-700"
+                    }`}
                 >
                     {product.stock > 0 ? (
                         <>
@@ -119,12 +127,74 @@ const ProductInfo = ({
                 )}
             </div>
 
-            {product.quick_view && (
-                <div className="mb-6 md:mb-8 bg-gray-50 p-4 rounded-lg border border-gray-100">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
-                        Quick Overview
-                    </h3>
-                    <SafeHTML html={product.quick_view} />
+            {/* COLOR VARIATION SELECTOR (Optional) */}
+            {colors.length > 0 && (
+                <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2 font-hindSiliguri">
+                        <span className="text-sm font-bold text-gray-800">
+                            কালার পছন্দ করুন:
+                        </span>
+                        {selectedColor && (
+                            <span className="text-xs bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded border border-emerald-200">
+                                {selectedColor}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {colors.map((color) => {
+                            const isSelected = selectedColor === color;
+                            return (
+                                <button
+                                    key={color}
+                                    type="button"
+                                    onClick={() => setSelectedColor(color)}
+                                    className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-all flex items-center gap-1.5 ${
+                                        isSelected
+                                            ? "bg-emerald-600 text-white border-emerald-600 shadow-sm ring-2 ring-emerald-200 font-bold"
+                                            : "bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                                    }`}
+                                >
+                                    {isSelected && <CheckCircle size={14} />}
+                                    {color}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* SIZE VARIATION SELECTOR (Optional) */}
+            {sizes.length > 0 && (
+                <div className="mb-5">
+                    <div className="flex items-center gap-2 mb-2 font-hindSiliguri">
+                        <span className="text-sm font-bold text-gray-800">
+                            সাইজ পছন্দ করুন:
+                        </span>
+                        {selectedSize && (
+                            <span className="text-xs bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded border border-emerald-200">
+                                {selectedSize}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {sizes.map((size) => {
+                            const isSelected = selectedSize === size;
+                            return (
+                                <button
+                                    key={size}
+                                    type="button"
+                                    onClick={() => setSelectedSize(size)}
+                                    className={`min-w-[42px] px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-all text-center ${
+                                        isSelected
+                                            ? "bg-emerald-600 text-white border-emerald-600 shadow-sm ring-2 ring-emerald-200 font-bold"
+                                            : "bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                                    }`}
+                                >
+                                    {size}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
             )}
         </>

@@ -79,8 +79,10 @@ createInertiaApp({
                 "_" +
                 Math.floor(Math.random() * 1000);
 
-            // Initial FB tracking
-            ReactPixel.track("PageView", {}, { eventID: initialEventId });
+            // Initial FB tracking (skip duplicate if base script in head already tracked it)
+            if (!window._fbqInitialPageViewFired) {
+                ReactPixel.track("PageView", {}, { eventID: initialEventId });
+            }
 
             // Initial GTM tracking
             window.dataLayer.push({

@@ -28,6 +28,8 @@ class Product extends Model
         'slug',
         'brand',
         'color',
+        'colors',
+        'sizes',
         'weight',
         'length',
         'width',
@@ -41,7 +43,7 @@ class Product extends Model
         'sku',
         'bussiness_class',
         'discount',
-        'initial_rating' // <-- Added
+        'initial_rating'
     ];
 
     protected $casts = [
@@ -51,7 +53,9 @@ class Product extends Model
         'width' => 'float',
         'stock' => 'integer',
         'discount' => 'float',
-        'initial_rating' => 'float', // <-- Added
+        'initial_rating' => 'float',
+        'colors' => 'array',
+        'sizes' => 'array',
     ];
 
     // Automatically append these virtual fields when sending data to React

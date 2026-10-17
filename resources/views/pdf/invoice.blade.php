@@ -154,7 +154,12 @@
         <tbody>
             @foreach($order->items as $item)
             <tr>
-                <td>{{ $item->product_name }}</td>
+                <td>
+                    {{ $item->product_name }}
+                    @if($item->color || $item->size)
+                        <br><small style="color: #555; font-size: 11px;">({{ implode(', ', array_filter([$item->color ? 'Color: ' . $item->color : null, $item->size ? 'Size: ' . $item->size : null])) }})</small>
+                    @endif
+                </td>
                 <td class="text-right">TK {{ number_format($item->price, 2) }}</td>
                 <td class="text-right">{{ $item->quantity }}</td>
                 <td class="text-right">TK {{ number_format($item->price * $item->quantity, 2) }}</td>

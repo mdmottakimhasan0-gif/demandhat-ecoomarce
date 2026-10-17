@@ -75,6 +75,21 @@ const Cart = ({ cartItems = [], totals = {} }) => {
                                                         {item.name}
                                                     </h3>
 
+                                                    {(item.color || item.size) && (
+                                                        <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                                                            {item.color && (
+                                                                <span className="text-[11px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium border border-blue-200">
+                                                                    Color: {item.color}
+                                                                </span>
+                                                            )}
+                                                            {item.size && (
+                                                                <span className="text-[11px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-medium border border-emerald-200">
+                                                                    Size: {item.size}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+
                                                     {/* Unit Price Display Logic */}
                                                     <div className="flex items-center flex-wrap gap-2 mt-1">
                                                         <span className="text-gray-500 text-xs uppercase tracking-wider">

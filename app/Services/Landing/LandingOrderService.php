@@ -258,7 +258,15 @@ class LandingOrderService
             ]);
 
             foreach ($items as $i) {
-                OrderItem::create(['order_id' => $order->id, 'product_id' => $i['id'], 'product_name' => $i['name'], 'price' => $i['price'], 'quantity' => $i['quantity']]);
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $i['id'],
+                    'product_name' => $i['name'],
+                    'color' => $i['color'] ?? null,
+                    'size' => $i['size'] ?? null,
+                    'price' => $i['price'],
+                    'quantity' => $i['quantity'],
+                ]);
                 $models[$i['id']]->decrement('stock', $i['quantity']);
             }
 
