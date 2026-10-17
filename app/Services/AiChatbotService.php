@@ -497,17 +497,22 @@ class AiChatbotService
      */
     protected function parseAndCreateProduct(string $raw): ?Product
     {
+        // Normalize Bengali numerals to English digits
+        $bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        $en = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        $normalized = str_replace($bn, $en, $raw);
+
         // Extract Price (e.g. দাম ৫০০ বা 500 tk বা price: 500)
         $price = 0;
-        if (preg_match('/(?:দাম|price|tk|টাকা)[:\s]*(\d+)/iu', $raw, $m)) {
+        if (preg_match('/(?:দাম|price|tk|টাকা)[:\s]*(\d+)/iu', $normalized, $m)) {
             $price = (float) $m[1];
-        } elseif (preg_match('/\b(\d{2,6})\s*(?:টাকা|tk)\b/iu', $raw, $m)) {
+        } elseif (preg_match('/\b(\d{2,6})\s*(?:টাকা|tk)\b/iu', $normalized, $m)) {
             $price = (float) $m[1];
         }
 
         // Extract Stock (e.g. স্টক ৫০ বা stock 50)
         $stock = 20;
-        if (preg_match('/(?:স্টক|stock)[:\s]*(\d+)/iu', $raw, $m)) {
+        if (preg_match('/(?:স্টক|stock)[:\s]*(\d+)/iu', $normalized, $m)) {
             $stock = (int) $m[1];
         }
 
@@ -533,7 +538,8 @@ class AiChatbotService
         // Remove trigger words and details
         $clean = preg_replace('/^(?:একটি|একটা)?\s*(?:নতুন\s+)?(?:প্রোডাক্ট|পণ্য|product)?\s*(?:যোগ\s+করো|অ্যাড\s+করো|বানাও|add)?/iu', '', $raw);
         $clean = preg_replace('/(?:দাম|price|স্টক|stock|tk|টাকা|কালার|সাইজ).*/iu', '', $clean);
-        $name = trim(str_replace(['যোগ করো', 'অ্যাড করো', 'add', 'create'], '', $clean)) ?: 'New Product';
+        $clean = str_replace(['যোগ করো', 'অ্যাড করো', 'add', 'create'], '', $clean);
+        $name = trim(trim($clean), ",.। -\t\n\r\0\x0B") ?: 'New Product';
 
         // Default category
         $category = Category::first();
