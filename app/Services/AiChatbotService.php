@@ -398,7 +398,10 @@ class AiChatbotService
         // Stopwords to ignore
         $stopWords = [
             'সেরা', 'প্রোডাক্টগুলো', 'প্রোডাক্ট', 'পণ্য', 'দেখাও', 'চাই', 'আছে', 'কি', 'গুলো', 'দেখান',
-            'আমাকে', 'একটি', 'কিছু', 'দাম', 'কত', 'show', 'products', 'product', 'best', 'the', 'and', 'for', 'item', 'items'
+            'আমাকে', 'একটি', 'কিছু', 'দাম', 'কত', 'আপনার', 'আমার', 'আপনি', 'আমি', 'আমাদের', 'করতে',
+            'পারেন', 'কীভাবে', 'কিভাবে', 'নাম', 'এবং', 'জন্য', 'থেকে', 'হলো', 'হবে', 'করুন', 'দয়া',
+            'করে', 'হ্যালো', 'hi', 'hello', 'hey', 'please', 'help', 'সাহায্য', 'বলুন', 'বলো', 'জানতে',
+            'show', 'products', 'product', 'best', 'the', 'and', 'for', 'item', 'items', 'with', 'what', 'who', 'is'
         ];
 
         $rawWords = preg_split('/[\s,\.\?!]+/u', $clean, -1, PREG_SPLIT_NO_EMPTY);
@@ -418,17 +421,11 @@ class AiChatbotService
         $query = Product::query();
         $query->where(function ($q) use ($searchTerms) {
             foreach ($searchTerms as $term) {
-                $q->orWhere('name', 'like', "%{$term}%")
-                  ->orWhere('description', 'like', "%{$term}%");
+                $q->orWhere('name', 'like', "%{$term}%");
             }
         });
 
         $results = $query->where('stock', '>', 0)->latest()->take(4)->get();
-
-        // If specific search had no results, fallback to latest products if product intent was present
-        if ($results->isEmpty() && (str_contains($clean, 'প্রোডাক্ট') || str_contains($clean, 'আছে') || str_contains($clean, 'চাই'))) {
-            return Product::where('stock', '>', 0)->latest()->take(4)->get();
-        }
 
         return $results;
     }
