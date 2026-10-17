@@ -14,11 +14,13 @@ use App\Http\Controllers\CourierController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Order;
 use App\Http\Controllers\AdminReviewController;
+use App\Http\Controllers\ChatbotController;
 
 // ==========================================
 // 1. PUBLIC ROUTES (Accessible by everyone)
 // ==========================================
 Route::get('/', [CustomerController::class, 'index'])->name('home');
+Route::post('/api/chatbot/customer', [ChatbotController::class, 'customerChat'])->name('chatbot.customer');
 Route::get('/categories', [CustomerController::class, 'showCategories']);
 Route::get('/category/{id}', [CustomerController::class, 'showProductsByCategory']);
 Route::get('/product/{id}', [ProductController::class, 'showDetails']);
@@ -191,6 +193,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/employees/export-excel', [EmployeeController::class, 'exportExcel']);
 
+    // 8. AI Assistant / Copilot
+    Route::post('/admin/ai-assistant/chat', [ChatbotController::class, 'adminChat'])->name('admin.ai.chat');
+    Route::get('/admin/ai-assistant/status', [ChatbotController::class, 'getAdminStatus'])->name('admin.ai.status');
+    Route::post('/admin/ai-assistant/save-key', [ChatbotController::class, 'saveApiKey'])->name('admin.ai.save_key');
   });
 
   // ------------------------------------------

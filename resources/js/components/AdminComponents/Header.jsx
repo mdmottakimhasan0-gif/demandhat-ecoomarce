@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Link, usePage } from "@inertiajs/react";
+import AdminAiCopilot from "./AdminAiCopilot";
 
 function Header() {
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -35,6 +36,9 @@ function Header() {
                         <span className="hidden sm:block text-xs font-medium text-slate-500 dark:text-slate-400">
                             Logged in as <span className="text-slate-800 dark:text-slate-200 capitalize font-semibold">{user.role}</span>
                         </span>
+
+                        {/* AI Assistant Copilot */}
+                        <AdminAiCopilot />
 
                         {/* Profile Icon */}
                         <div
