@@ -237,23 +237,43 @@ class AiChatbotService
         }
 
         // 2. Quick Add Product Command
-        // e.g. "একটা কালো টি-শার্ট অ্যাড করো, দাম ৫০০ টাকা, স্টক ৫০" or "add product Smart Watch price 1200 stock 30"
-        if (str_contains($clean, 'প্রোডাক্ট যোগ') || str_contains($clean, 'পণ্য যোগ') || str_contains($clean, 'add product') || str_contains($clean, 'create product')) {
-            $created = $this->parseAndCreateProduct($raw);
-            if ($created) {
+        // e.g. "একটা কালো টি-শার্ট যোগ করো, দাম ৫০০ টাকা, স্টক ৫০" or "নতুন প্রোডাক্ট যোগ" or "add product Smart Watch price 1200 stock 30"
+        $isAddProductIntent = str_contains($clean, 'যোগ করো')
+            || str_contains($clean, 'অ্যাড করো')
+            || str_contains($clean, 'add product')
+            || str_contains($clean, 'create product')
+            || (str_contains($clean, 'প্রোডাক্ট') && (str_contains($clean, 'যোগ') || str_contains($clean, 'অ্যাড') || str_contains($clean, 'নতুন')))
+            || (str_contains($clean, 'পণ্য') && (str_contains($clean, 'যোগ') || str_contains($clean, 'অ্যাড')));
+
+        if ($isAddProductIntent) {
+            $hasDetails = preg_match('/(?:দাম|price|tk|টাকা|স্টক|stock|\d{2,6})/iu', $raw);
+            if ($hasDetails) {
+                $created = $this->parseAndCreateProduct($raw);
+                if ($created) {
+                    return [
+                        'type' => 'action_result',
+                        'text' => "🎉 **নতুন প্রোডাক্ট সফলভাবে ড্রাফট তৈরি হয়েছে!**\n\n" .
+                            "• **নাম:** {$created->name}\n" .
+                            "• **দাম:** ৳{$created->price}\n" .
+                            "• **স্টক:** {$created->stock}\n" .
+                            (!empty($created->colors) ? "• **কালার:** " . implode(', ', $created->colors) . "\n" : "") .
+                            (!empty($created->sizes) ? "• **সাইজ:** " . implode(', ', $created->sizes) . "\n" : "") .
+                            "\nএখন আপনি প্রোডাক্টটিতে ছবি বা প্রয়োজনীয় তথ্য যুক্ত করে পাবলিশ করতে পারেন।",
+                        'action' => [
+                            'label' => 'প্রোডাক্টটি এডিট ও ছবি যোগ করুন',
+                            'url' => "/admin/products/{$created->id}/edit",
+                        ],
+                    ];
+                }
+            } else {
                 return [
                     'type' => 'action_result',
-                    'text' => "🎉 **নতুন প্রোডাক্ট সফলভাবে তৈরি হয়েছে!**\n\n" .
-                        "• **নাম:** {$created->name}\n" .
-                        "• **দাম:** ৳{$created->price}\n" .
-                        "• **স্টক:** {$created->stock}\n" .
-                        (!empty($created->colors) ? "• **কালার:** " . implode(', ', $created->colors) . "\n" : "") .
-                        (!empty($created->sizes) ? "• **সাইজ:** " . implode(', ', $created->sizes) . "\n" : "") .
-                        "\nএখন আপনি প্রোডাক্টটিতে ছবি বা বিস্তারিত যোগ করতে পারেন।",
+                    'text' => "📦 **নতুন প্রোডাক্ট যোগ করার নিয়ম:**\n\nআপনি চ্যাটে সরাসরি এভাবে লিখে পাঠাতে পারেন:\n*'একটি কালো টি-শার্ট যোগ করো, দাম ৫০০ টাকা, স্টক ৫০'* অথবা *'Add Smart Watch price 1500 stock 20'*\n\nঅথবা ম্যানুয়ালি প্রোডাক্ট তৈরি করতে নিচের বাটনে ক্লিক করুন:",
                     'action' => [
-                        'label' => 'প্রোডাক্ট এডিট করুন',
-                        'url' => "/admin/products/{$created->id}/edit",
+                        'label' => 'ম্যানুয়ালি নতুন প্রোডাক্ট যোগ করুন',
+                        'url' => "/admin/products/create",
                     ],
+                    'quick_replies' => ['একটি কালো টি-শার্ট যোগ করো, দাম ৫০০ টাকা, স্টক ৫০', 'আজকের সেল রিপোর্ট'],
                 ];
             }
         }
